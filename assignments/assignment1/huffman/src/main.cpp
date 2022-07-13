@@ -34,7 +34,7 @@ int main(int argc, const char * argv[])
 	ret = huffman_encode((unsigned char*)in_contents.c_str(), in_contents.size(), &code, &code_size);
 
 	if(ret != 0)
-	{ cerr << "Huffman encode failed with code " << ret << endl; return EXIT_FAILURE; }
+	{  cerr << "Huffman encode failed with code " << ret << endl; return EXIT_FAILURE; }
 
 
 	// Save code to file
@@ -51,6 +51,7 @@ int main(int argc, const char * argv[])
 	// Read code from the same file
 	ifstream in_code(code_filename);
 	string code_contents((istreambuf_iterator<char>(in_code)), istreambuf_iterator<char>());
+
 
 
 	// Decode
@@ -71,6 +72,7 @@ int main(int argc, const char * argv[])
 	}
 
 
+
 	// Free memory
 	if(code){ free(code); }
 	if(decode){ free(decode); }
@@ -79,6 +81,7 @@ int main(int argc, const char * argv[])
 	// Check output
 	string diff_command = "diff " + string(in_filename) + " " + string(out_filename);
 	int diff_ret = system(diff_command.c_str());
+    
 
 	if(WEXITSTATUS(diff_ret) == 0)
 	{

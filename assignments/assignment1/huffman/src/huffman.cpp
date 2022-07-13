@@ -9,7 +9,6 @@ int huffman_encode(const unsigned char *bufin,
 						  unsigned char **pbufout,
 						  unsigned int *pbufoutlen)
 {
-
 	return 0;
 }
 
