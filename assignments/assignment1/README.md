@@ -5,8 +5,14 @@
 ### Inputs
 * Text file 
 ### Outputs
-* Huffman tree e
+* Huffman tree
 * Huffman/Prefix Codes
+### Logic
+1. Loop through text and create a hash table
+    * Keys = each unique character
+    * Values = # of occurrence of that character
+1. Loop through the hash table keys and sort from highest to lowest occurrence
+1.  
 
 ## Decoding
 ### Inputs
