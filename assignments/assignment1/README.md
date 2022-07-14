@@ -12,7 +12,7 @@
     * Keys = each unique character
     * Values = # of occurrence of that character
 1. Loop through the hash table keys and sort from highest to lowest occurrence
-1.  
+1. 
 
 ## Decoding
 ### Inputs
