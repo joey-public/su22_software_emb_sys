@@ -1,4 +1,5 @@
 #include "huffman.h"
+#include <iostream>
 
 
 /**
@@ -9,6 +10,7 @@ int huffman_encode(const unsigned char *bufin,
 						  unsigned char **pbufout,
 						  unsigned int *pbufoutlen)
 {
+    std::cout << "Encoding Input File\n";
 	return 0;
 }
 
@@ -21,5 +23,6 @@ int huffman_decode(const unsigned char *bufin,
 						  unsigned char **pbufout,
 						  unsigned int *pbufoutlen)
 {
+    std::cout << "Decoding Input File\n";
 	return 0;
 }
