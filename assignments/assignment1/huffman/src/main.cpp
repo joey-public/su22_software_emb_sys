@@ -79,10 +79,10 @@ int main(int argc, const char * argv[])
 
 
 	// Check output
-//	string diff_command = "diff " + string(in_filename) + " " + string(out_filename);
-//	int diff_ret = system(diff_command.c_str());
+	string diff_command = "diff " + string(in_filename) + " " + string(out_filename);
+	int diff_ret = system(diff_command.c_str());
     
-/*
+
 	if(WEXITSTATUS(diff_ret) == 0)
 	{
 		cout << "SUCCESS" << endl;
@@ -93,7 +93,7 @@ int main(int argc, const char * argv[])
 		cout << "FAILURE" << endl;
 		return EXIT_FAILURE;
 	}
-*/
+
 
     return 0;
 }
