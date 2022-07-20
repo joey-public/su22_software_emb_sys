@@ -1,29 +1,30 @@
 #include "huffman.h"
 #include <iostream>
 #include <map>
+#include <queue>
 
 void print_map(std::map<char, int> mp)
 {
     std::cout << "KEY\tELEMENT\n";
     for (auto itr = mp.begin(); itr != mp.end(); ++itr) 
     {
-        std::cout <<  itr->first << '\t' << itr->second << '\n';
+        std::cout << itr->first  << '\t' << itr->second << '\n';
     }
 }
-void print_queue(char *head, char *tail, std::map<char,int> mp)
+
+void getMin(std::map<char, int>& mp, char& c, int& i)
 {
-    int len = tail-head;
-    std::cout << len << std::endl; 
-    std::cout << "KEY\tELEMENT\n";
-    for(int i = 0; i < (len-1); i++)
+    c = mp.begin()->first;
+    i = mp.begin()->second;
+    for (auto itr = mp.begin(); itr != mp.end(); ++itr) 
     {
-        char key = *(head+i);
-//        std::cout << key << '\t' << mp.at(key) << '\n';
-        std::cout << key << '\n';
+        if(itr->second < i)
+        {
+            c=itr->first;
+            i=itr->second;
+        }
     }
-}
-*char quickSortSymMap(std::map<char,int> mp)
-{
+    mp.erase(c);
 }
 
 /**
@@ -45,32 +46,10 @@ int huffman_encode(const unsigned char *bufin,
     }
     print_map(symFreqMap); 
     //2.Sort the symbols from lease to most frequent aka min queue or minheap
-    char minSym = symFreqMap.begin()->first;
-    int minOcc = symFreqMap.begin()->second;
-    //head of queue should point to the least frequent sym 
-    char *head = &minSym;
-    char *tail = head;
-    for (auto itr = symFreqMap.begin(); itr != symFreqMap.end(); ++itr) 
-    {
-        char curSym = itr->first;
-        int curOcc = itr->second;
-        if (curOcc < minOcc)
-        {
-            std::cout << "Least Frequent is: " << curOcc << ":" << curSym;
-            std::cout << " Old was: " << symFreqMap.at(*head) << ":" << *head << std::endl;
-            head -= 1; 
-            *head = curSym;
-            minOcc = curOcc;
-        }
-        else
-        {
-            std::cout << "Tail is: " << curOcc << ":" << curSym;
-            tail += 1;
-            *tail = curSym;
-        }
-    }
-    std::cout << "\nTail - Head = " << tail-head << "\n";
-//    print_queue(head, tail, symFreqMap);
+    char minChar = 'm';
+    int minVal = 0;
+    getMin(symFreqMap,minChar, minVal);
+    print_map(symFreqMap); 
     std::cout << "Finished Encoding Input File\n";
     return 1; 
 }
