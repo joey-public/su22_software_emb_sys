@@ -3,6 +3,7 @@
 #include <map>
 #include <queue>
 
+
 void print_map(std::map<char, int> mp)
 {
     std::cout << "KEY\tELEMENT\n";
@@ -21,6 +22,11 @@ void print_queue(std::queue<char> q)
     }
 }
 
+
+void mapToQueue(std::map<char, int>& mp, std::print_queue<CharFreqPair>& q)
+{
+
+}
 void getMax(std::map<char, int>& mp, char& c, int& i)
 {
     c = mp.begin()->first;
