@@ -11,14 +11,23 @@ void print_map(std::map<char, int> mp)
         std::cout << itr->first  << '\t' << itr->second << '\n';
     }
 }
+void print_queue(std::queue<char> q)
+{
+    int len = q.size();
+    for(int i=0; i < len; i++)
+    {
+        std::cout << q.front() << std::endl;
+        q.pop(); 
+    }
+}
 
-void getMin(std::map<char, int>& mp, char& c, int& i)
+void getMax(std::map<char, int>& mp, char& c, int& i)
 {
     c = mp.begin()->first;
     i = mp.begin()->second;
     for (auto itr = mp.begin(); itr != mp.end(); ++itr) 
     {
-        if(itr->second < i)
+        if(itr->second > i)
         {
             c=itr->first;
             i=itr->second;
@@ -46,15 +55,21 @@ int huffman_encode(const unsigned char *bufin,
     }
     print_map(symFreqMap); 
     //2.Sort the symbols from lease to most frequent aka min queue or minheap
-    char minChar = 'm';
-    int minVal = 0;
-    getMin(symFreqMap,minChar, minVal);
-    print_map(symFreqMap); 
+    std::queue<char>sortedChars{};
+    std::queue<int>sortedVals {};
+    std::map<char,int> map = symFreqMap;
+    for(int i = 0; i < symFreqMap.size(); i++)
+    {
+        char maxChar = 'm';
+        int maxVal = 0;
+        getMax(map, maxChar, maxVal);
+        sortedChars.push(maxChar);
+        sortedVals.push(maxVal);
+    }
     std::cout << "Finished Encoding Input File\n";
+    print_queue(sortedChars);
     return 1; 
 }
-
-
 
 /**
  * TODO Complete this function
