@@ -1,10 +1,10 @@
 #include "huffman.h"
 #include <iostream>
-#include <map>
+#include <unordered_map>
 #include <queue>
 
 
-void print_map(std::map<char, int> mp)
+void print_map(std::unordered_map<char, int> mp)
 {
     std::cout << "KEY\tELEMENT\n";
     for (auto itr = mp.begin(); itr != mp.end(); ++itr) 
@@ -22,12 +22,19 @@ void print_queue(std::queue<char> q)
     }
 }
 
+struct CharFreqPair{
+    char character;
+    int frequency;
+    bool isSym;
+};
+struct Compare{
+    bool operator()(CharFreqPair a, CharFreqPair b)
+    {
+        return (a.frequency > b.frequency)
+    }
+};
 
-void mapToQueue(std::map<char, int>& mp, std::print_queue<CharFreqPair>& q)
-{
-
-}
-void getMax(std::map<char, int>& mp, char& c, int& i)
+void getMax(std::unordered_map<char, int>& mp, char& c, int& i)
 {
     c = mp.begin()->first;
     i = mp.begin()->second;
@@ -51,8 +58,8 @@ int huffman_encode(const unsigned char *bufin,
 						  unsigned int *pbufoutlen)
 {
     std::cout << "Encoding Input File\n";
-    //1. calculate the frequency of each char 
-    std::map<char, int> symFreqMap = {};
+    //1. char 
+    std::unordered_map<char, int> symFreqMap = {};
     for(int i = 0; i < bufinlen-1; i++)
     {
         char key = *(bufin + i);
@@ -61,9 +68,9 @@ int huffman_encode(const unsigned char *bufin,
     }
     print_map(symFreqMap); 
     //2.Sort the symbols from lease to most frequent aka min queue or minheap
-    std::queue<char>sortedChars{};
-    std::queue<int>sortedVals {};
-    std::map<char,int> map = symFreqMap;
+     
+    std::unordered_map<char,int> map = symFreqMap;
+    std::print_queue<> queue {};
     for(int i = 0; i < symFreqMap.size(); i++)
     {
         char maxChar = 'm';
