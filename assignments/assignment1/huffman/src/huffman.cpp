@@ -5,10 +5,12 @@
 
 
 struct Node{
-    bool isLeaf;
-    char character;
-    int frequency;
-    Node* parent;
+    bool isLeaf=false;
+    char character='$';
+    int frequency=0;
+    Node* parent=nullptr;
+    Node* leftChild=nullptr;
+    Node* rightChild=nullptr;
 };
 struct NodeHeap{
     std::stack<int> availableKey;
@@ -41,8 +43,43 @@ void addNode(NodeHeap& heap, Node& newNode)
     int newKey;
     if(heap.availableKey.size() == 0){newKey = heap.map.size();}
     else{newKey = heap.availableKey.top();heap.availableKey.pop();}
-    std::cout << "Adding: " << newKey << newNode.character << std::endl;
+//    std::cout << "Adding: " << newKey << newNode.character << std::endl;
     heap.map.insert({newKey, newNode});
+}
+
+void constructTree(NodeHeap& heap, Node& root)
+{
+    bool rootFound=false;
+    int i=0;
+    while(!rootFound)
+    {
+        Node a, b, c;
+        popMin(heap, a);
+        if(heap.map.size() == 1){rootFound=true;}
+        popMin(heap, b);
+        c.frequency = a.frequency + b.frequency;
+        c.isLeaf = false;
+        c.character = '$';
+        a.parent = &c;
+        b.parent = &c;
+        c.leftChild = &a;
+        c.rightChild = &b;
+        addNode(heap, c);
+        std::cout << "Popped: ";
+        std::cout << a.character << ':' << a.frequency << " and " ;
+        std::cout << b.character << ':' << b.frequency << '\n';
+        std::cout << "Created: ";
+        if(rootFound){root = c;}
+        std::cout << c.character << ':' << c.frequency << '\n';
+        std::cout << "----------\n";
+        i++; 
+        if(i>100){std::cout<<"not good"; break;}
+    }
+    std::cout << "Root is: " << root.character << ':' << root.frequency << '\n';
+    Node x = *(root.rightChild);
+    std::cout << x.character << ':' << x.frequency << ':' << x.isLeaf <<'\n';
+    x = *(x.leftChild);
+    std::cout << x.character << ':' << x.frequency << ':' << x.isLeaf <<'\n';
 }
 
 //helper print functions
@@ -97,18 +134,8 @@ int huffman_encode(const unsigned char *bufin,
     nodeHeap.map = nodeMap;
     ppNodeHeap(nodeHeap);
     //3. pop the smallest two nodes;
-    Node a, b;
-    popMin(nodeHeap,a);
-    popMin(nodeHeap,b);
-    Node c;
-    c.isLeaf = false;
-    c.character = '$';
-    c.frequency = a.frequency + b.frequency;
-    a.parent = &c;
-    b.parent = &c;
-    addNode(nodeHeap, c);
-    ppNodeHeap(nodeHeap);
-
+    Node rootNode;
+    constructTree(nodeHeap, rootNode);
     std::cout << "Finished Encoding Input File\n";
     return 1; 
 }
