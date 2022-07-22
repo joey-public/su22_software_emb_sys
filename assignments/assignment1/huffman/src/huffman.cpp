@@ -1,52 +1,45 @@
 #include "huffman.h"
 #include <iostream>
 #include <unordered_map>
-#include <queue>
+#include <stack>
 
 
-void print_map(std::unordered_map<char, int> mp)
-{
-    std::cout << "KEY\tELEMENT\n";
-    for (auto itr = mp.begin(); itr != mp.end(); ++itr) 
-    {
-        std::cout << itr->first  << '\t' << itr->second << '\n';
-    }
-}
-void print_queue(std::queue<char> q)
-{
-    int len = q.size();
-    for(int i=0; i < len; i++)
-    {
-        std::cout << q.front() << std::endl;
-        q.pop(); 
-    }
-}
-
-struct CharFreqPair{
+struct Node{
+    bool isLeaf;
     char character;
     int frequency;
-    bool isSym;
 };
-struct Compare{
-    bool operator()(CharFreqPair a, CharFreqPair b)
-    {
-        return (a.frequency > b.frequency)
-    }
+struct NodeHeap{
+    std::stack<int> availableKey;
+    std::unordered_map<int, Node> map;
 };
 
-void getMax(std::unordered_map<char, int>& mp, char& c, int& i)
+void popMin(NodeHeap& heap, Node& minNode)
 {
-    c = mp.begin()->first;
-    i = mp.begin()->second;
-    for (auto itr = mp.begin(); itr != mp.end(); ++itr) 
+    if(heap.map.size() == 0){return;} 
+    Node min = heap.map.begin()->second;
+    int minKey = heap.map.begin()->first;
+    for (auto itr = heap.map.begin(); itr != heap.map.end(); itr++)
     {
-        if(itr->second > i)
+        if(itr->second.frequency < min.frequency)
         {
-            c=itr->first;
-            i=itr->second;
+            min = itr->second;
+            minKey = itr->first;
         }
     }
-    mp.erase(c);
+    minNode.isLeaf = min.isLeaf;
+    minNode.character = min.character;
+    minNode.frequency = min.frequency;
+    heap.map.erase(minKey);
+    heap.availableKey.push(minKey);
+}
+
+void addNode(NodeHeap heap, Node& newNode)
+{
+    int newKey;
+    if(heap.availableKey.size() == 0){newKey = heap.map.size();}
+    else{newKey = heap.availableKey.top();heap.availableKey.pop();}
+    heap.map.insert({newKey, newNode});
 }
 
 /**
@@ -58,29 +51,48 @@ int huffman_encode(const unsigned char *bufin,
 						  unsigned int *pbufoutlen)
 {
     std::cout << "Encoding Input File\n";
-    //1. char 
+    //1. create map of char and frequency 
     std::unordered_map<char, int> symFreqMap = {};
     for(int i = 0; i < bufinlen-1; i++)
     {
         char key = *(bufin + i);
-        if(symFreqMap.count(key) == 0) { symFreqMap.insert({key,1}); }
+        if(symFreqMap.count(key) == 0)
+        {
+            symFreqMap.insert({key,1}); 
+        }
         else{ symFreqMap.at(key) += 1; }
     }
-    print_map(symFreqMap); 
-    //2.Sort the symbols from lease to most frequent aka min queue or minheap
-     
-    std::unordered_map<char,int> map = symFreqMap;
-    std::print_queue<> queue {};
-    for(int i = 0; i < symFreqMap.size(); i++)
+    //2. transfer data to a node Heap 
+    std::unordered_map<int, Node> nodeMap= {};
+    int i = 0;
+    for(auto itr=symFreqMap.begin(); itr!=symFreqMap.end(); ++itr)
     {
-        char maxChar = 'm';
-        int maxVal = 0;
-        getMax(map, maxChar, maxVal);
-        sortedChars.push(maxChar);
-        sortedVals.push(maxVal);
+        Node n;
+        n.isLeaf = true;
+        n.character = itr->first;
+        n.frequency = itr->second;
+        nodeMap.insert({i,n});
+        i ++;
+        std::cout <<  n.isLeaf << ", " << n.character  << ", " << n.frequency << '\n';
     }
+    NodeHeap nodeHeap;
+//    nodeHeap.availableKey = nodeMap.size();
+    nodeHeap.map = nodeMap;
+    //3. pop the smallest two nodes;
+    for(int i = 0; i < nodeMap.size(); i++)
+    {
+        Node x;
+        popMin(nodeHeap, x);
+        std::cout << x.character << '\t' << x.frequency << ',' << x.isLeaf << '\n';
+    }
+    /*
+    Node a, b;
+    popMin(nodeHeap,a);
+    popMin(nodeHeap,b);
+    std::cout << a.character;
+    */
+
     std::cout << "Finished Encoding Input File\n";
-    print_queue(sortedChars);
     return 1; 
 }
 
