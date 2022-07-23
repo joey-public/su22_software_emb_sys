@@ -2,6 +2,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <stack>
+#include <stdlib.h>
 
 
 struct Node{
@@ -12,6 +13,15 @@ struct Node{
     Node* leftChild=nullptr;
     Node* rightChild=nullptr;
 };
+void ppNode(Node n)
+{
+    std::cout << "char:" << n.character << ", ";
+    std::cout << "freq:" << n.frequency << ", ";
+    std::cout << "ilef:" << n.isLeaf << ", ";
+    std::cout << "rcld:" << n.rightChild << ", ";
+    std::cout << "lcld:" << n.leftChild << ", ";
+    std::cout << "prnt:" << n.parent<< '\n';
+}
 struct NodeHeap{
     std::stack<int> availableKey;
     std::unordered_map<int, Node> map;
@@ -38,51 +48,46 @@ void popMin(NodeHeap& heap, Node& minNode)
     heap.availableKey.push(minKey);
 }
 
-void addNode(NodeHeap& heap, Node newNode)
-{
-    int newKey;
-    if(heap.availableKey.size() == 0){newKey = heap.map.size();}
-    else{newKey = heap.availableKey.top();heap.availableKey.pop();}
-    std::cout << "...Adding: " << newKey <<':'<< newNode.character << ',';
-    std::cout << newNode.frequency << ',' << newNode.isLeaf << '\n';
-    heap.map.insert({newKey, newNode});
-}
 
 
 //helper print functions
 void ppNodeHeap(NodeHeap h)
 {
-//    std::cout << h.map.size() << std::endl;
+    std::cout << h.map.size() << std::endl;
     int len = h.map.size();
-    for(int i = 0; i< len-1; i++)
+    for(int i = 0; i< len; i++)
     {
         Node x;
         x.character = '^';
         x.frequency = -10;
         popMin(h, x);
-        std::cout << x.character << ", " << x.frequency << ", " << x.isLeaf << '\n';
+        ppNode(x);
     }
+}
+
+void addNode(NodeHeap& heap, Node newNode)
+{
+    int newKey;
+    if(heap.availableKey.size() == 0){newKey = heap.map.size();}
+    else{newKey = heap.availableKey.top();heap.availableKey.pop();}
+    ppNodeHeap(heap);
+    std::cout << "\t...Adding: "; 
+    ppNode(newNode);
+ //   std::cout << newNode.frequency << ',' << newNode.isLeaf << '\n';
+    heap.map.insert({newKey, newNode});
+    ppNodeHeap(heap);
 }
 
 void constructTree(NodeHeap& heap, Node *tree)
 {
-    std::cout << "MAKING TREE...\n";
-//    int nodeCount = 2*heap.map.size()-1;
-//    Node tree[nodeCount];
     int i=0;
     while(true)
     {
-std::cout << "------------------\n";
-        ppNodeHeap(heap);
         popMin(heap, *(tree+i));
-std::cout << "Tree at " << i << " is: ";
-std::cout << (*(tree+i)).character << ',' << (*(tree+i)).frequency << '\n';
         i+=1;
         popMin(heap, *(tree+i));
-std::cout << "Tree at " << i << " is: ";
-std::cout << (*(tree+i)).character << ',' << (*(tree+i)).frequency << '\n';
         i+=1;
-        Node n;
+        Node& n = *(tree+i);
         int a = i-2;
         int b = i-1;
         n.frequency = (*(tree+a)).frequency + (*(tree+b)).frequency;
@@ -90,18 +95,35 @@ std::cout << (*(tree+i)).character << ',' << (*(tree+i)).frequency << '\n';
         n.character = '$';
         n.leftChild = tree+a;
         n.rightChild = tree+b;
-        addNode(heap, n);
-//std::cout << "map size: " << heap.map.size() << '\n';
+//        std::cout << n.character << n.frequency << " left child: " << tree+a << ", ";
+//        std::cout << "right child: " << tree+b << '\n';
+        heap.map.insert({100+i,n});
+//        ppNodeHeap(heap);
+//        addNode(heap, n);
         if(heap.map.size() == 1)
         {
-//std::cout << i <<'\n';
             *(tree+i) = n;
-std::cout << "Tree at " << i << " is: ";
-std::cout << (*(tree+i)).character << ',' << (*(tree+i)).frequency << '\n';
-            std::cout << "DONE!\n";
             break;
         }
     }
+}
+
+void createCodeTable(std::unordered_map<char,int>& codeMap, Node* tree, int treeSize)
+{
+   std::cout << "MAKING CODE TABLE\n";
+   Node* x = (tree+treeSize-1); 
+   bool done = false;
+   int i = 0;
+   while (!done)
+   {
+      Node temp = *x;
+      x = temp.rightChild;
+      std::cout << temp.character << ',' << temp.frequency << std::endl; 
+      if(temp.isLeaf)
+      {
+        done = true;
+      }
+   }
 }
 
 /**
@@ -135,21 +157,27 @@ int huffman_encode(const unsigned char *bufin,
         n.frequency = itr->second;
         nodeMap.insert({i,n});
         i ++;
-        std::cout <<  n.isLeaf << ", " << n.character  << ", " << n.frequency << '\n';
+ //       std::cout <<  n.isLeaf << ", " << n.character  << ", " << n.frequency << '\n';
     }
     NodeHeap nodeHeap;
     nodeHeap.map = nodeMap;
-    ppNodeHeap(nodeHeap);
+//    ppNodeHeap(nodeHeap);
     //3. Construct the huffman tree 
     Node rootNode;
     int len = 2*nodeHeap.map.size()-1;
-    Node huffmanTree[len];
-    constructTree(nodeHeap, &huffmanTree[0]);
+    Node* huffmanTree = (Node*) malloc(len*sizeof(Node));
+    constructTree(nodeHeap, huffmanTree);
     rootNode = huffmanTree[len-1];
-    std::cout << "Root Node is: " << rootNode.character << ',' << rootNode.frequency << '\n';
-    std::cout << "Or maybe its: " << huffmanTree[len-1].character << ',' << huffmanTree[len-1].frequency << '\n';
+    for(int i = 0; i < len; i++)
+    {
+        ppNode(huffmanTree[i]);
+    }
+    //4.
+    std::unordered_map<char,int> codeTable;
+//    createCodeTable(codeTable, &huffmanTree[0], len);
 
     std::cout << "Finished Encoding Input File\n";
+    free(huffmanTree);
     return 1; 
 }
 
