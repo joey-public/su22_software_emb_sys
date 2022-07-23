@@ -3,10 +3,12 @@
 #include <unordered_map>
 #include <stack>
 #include <stdlib.h>
+#include <string>
 
 
 struct Node{
     bool isLeaf=false;
+    bool traversed=false;
     char character='*';
     int frequency=0;
     Node* parent=nullptr;
@@ -40,15 +42,11 @@ void popMin(NodeHeap& heap, Node& minNode)
             minKey = itr->first;
         }
     }
-    minNode.isLeaf = min.isLeaf;
-    minNode.character = min.character;
-    minNode.frequency = min.frequency;
+    minNode = heap.map.at(minKey);
 //    std::cout << "...Popping:" << minKey << ", " << min.character << ", " << min.frequency << std::endl;
     heap.map.erase(minKey);
     heap.availableKey.push(minKey);
 }
-
-
 
 //helper print functions
 void ppNodeHeap(NodeHeap h)
@@ -65,17 +63,22 @@ void ppNodeHeap(NodeHeap h)
     }
 }
 
-void addNode(NodeHeap& heap, Node newNode)
+int getAvailKey(NodeHeap& heap)
 {
     int newKey;
     if(heap.availableKey.size() == 0){newKey = heap.map.size();}
     else{newKey = heap.availableKey.top();heap.availableKey.pop();}
-    ppNodeHeap(heap);
-    std::cout << "\t...Adding: "; 
-    ppNode(newNode);
- //   std::cout << newNode.frequency << ',' << newNode.isLeaf << '\n';
+    return newKey;
+}
+void addNode(NodeHeap& heap, Node newNode)
+{
+//    ppNodeHeap(heap);
+//    std::cout << "\t...Adding: "; 
+//    ppNode(newNode);
+//   std::cout << newNode.frequency << ',' << newNode.isLeaf << '\n';
+    int newKey = getAvailKey(heap);
     heap.map.insert({newKey, newNode});
-    ppNodeHeap(heap);
+//    ppNodeHeap(heap);
 }
 
 void constructTree(NodeHeap& heap, Node *tree)
@@ -87,19 +90,18 @@ void constructTree(NodeHeap& heap, Node *tree)
         i+=1;
         popMin(heap, *(tree+i));
         i+=1;
-        Node& n = *(tree+i);
         int a = i-2;
         int b = i-1;
+        Node n;
         n.frequency = (*(tree+a)).frequency + (*(tree+b)).frequency;
         n.isLeaf = false;
         n.character = '$';
         n.leftChild = tree+a;
         n.rightChild = tree+b;
+//        ppNodeHeap(heap);
+        addNode(heap, n);
 //        std::cout << n.character << n.frequency << " left child: " << tree+a << ", ";
 //        std::cout << "right child: " << tree+b << '\n';
-        heap.map.insert({100+i,n});
-//        ppNodeHeap(heap);
-//        addNode(heap, n);
         if(heap.map.size() == 1)
         {
             *(tree+i) = n;
@@ -108,21 +110,28 @@ void constructTree(NodeHeap& heap, Node *tree)
     }
 }
 
-void createCodeTable(std::unordered_map<char,int>& codeMap, Node* tree, int treeSize)
+void createCodeTable(std::unordered_map<char,std::string>& codeMap, Node* root, std::string code)
 {
-   std::cout << "MAKING CODE TABLE\n";
-   Node* x = (tree+treeSize-1); 
-   bool done = false;
-   int i = 0;
-   while (!done)
+   Node& node = *root;
+   std::cout << "analyzing...";
+   ppNode(node);
+   if(node.isLeaf) 
    {
-      Node temp = *x;
-      x = temp.rightChild;
-      std::cout << temp.character << ',' << temp.frequency << std::endl; 
-      if(temp.isLeaf)
-      {
-        done = true;
-      }
+       char key = node.character; 
+       codeMap.insert({key, code}); 
+       std::cout << "FOUND LEAF: ";
+       std::cout << "Inserting " << key << ':' << code << '\n';
+   }
+   else
+   {
+      
+      code += "!";
+      code[code.size()-1] = '0';
+      std::cout << "searching left\n";
+      createCodeTable(codeMap, node.leftChild, code); 
+      code[code.size()-1] = '1';
+      std::cout << "searching right\n";
+      createCodeTable(codeMap, node.rightChild, code); 
    }
 }
 
@@ -166,18 +175,20 @@ int huffman_encode(const unsigned char *bufin,
     Node rootNode;
     int len = 2*nodeHeap.map.size()-1;
     Node* huffmanTree = (Node*) malloc(len*sizeof(Node));
-    constructTree(nodeHeap, huffmanTree);
+    constructTree(nodeHeap, &(huffmanTree[0]));
     rootNode = huffmanTree[len-1];
-    for(int i = 0; i < len; i++)
+    //4.
+    for(int i =0; i<len; i++)
     {
         ppNode(huffmanTree[i]);
     }
-    //4.
-    std::unordered_map<char,int> codeTable;
-//    createCodeTable(codeTable, &huffmanTree[0], len);
-
+    /*
+    std::unordered_map<char,std::string> codeTable;
+    std::string code = "";
+    createCodeTable(codeTable, &huffmanTree[len-1], code);
     std::cout << "Finished Encoding Input File\n";
     free(huffmanTree);
+    */
     return 1; 
 }
 
