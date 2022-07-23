@@ -178,10 +178,10 @@ int huffman_encode(const unsigned char *bufin,
     constructTree(nodeHeap, &(huffmanTree[0]));
     rootNode = huffmanTree[len-1];
     //4. Generate Huffman Code Table
-    for(int i =0; i<len; i++)
-    {
-        ppNode(huffmanTree[i]);
-    }
+//    for(int i =0; i<len; i++)
+//    {
+//        ppNode(huffmanTree[i]);
+//    }
     std::unordered_map<char,std::string> codeTable;
     std::string code = "";
     createCodeTable(codeTable, &huffmanTree[len-1], code);
@@ -219,7 +219,7 @@ int huffman_encode(const unsigned char *bufin,
         compressedString[i] = codedMessage[k];
         i++;
     }
-    std::cout << compressedString << '\n';
+//    std::cout << compressedString << '\n';
     *pbufout = compressedString; 
     *pbufoutlen = bufLen;
     free(huffmanTree);
@@ -238,33 +238,63 @@ int huffman_decode(const unsigned char *bufin,
     std::cout << "Decoding Input File\n";
     bool readingHeader = true;
     std::unordered_map<std::string,char> decodeMap;
-    int k = 0;
-    for(int i = 0; i < bufinlen; i++)
+    int i = 0;
+    char c = *bufin;
+    std::cout << "CODE:\n";
+    std::string key = "$";
+    std::string decodedString ="";
+    char value = '-';
+    while(c != '\n')
+    {
+        c = *(bufin+i);
+        if(c==',')
+        {
+            i += 1;
+            c = *(bufin+i);
+            value = c;
+            key = "";
+            i += 1;
+            c = *(bufin+i);
+        }
+        else
+        {
+            while(c != ',' and c != '\n')
+            {
+                key += c; 
+                i += 1;
+                c = *(bufin+i);
+            }
+            decodeMap.insert({key, value});
+            std::cout << "Found->" << key << ":" << value << '\n';
+        }
+    }
+    i+=1;
+    std::cout << "MESSAGE:\n";
+    std::string temp = "";
+    for(i; i < bufinlen; i++)
     {
         char c = *(bufin+i);
-        while(c!='\n')
+        temp += c;
+ //       std::cout << "curChar: " << c << ", temp: " << temp;
+        for(auto itr = decodeMap.begin(); itr != decodeMap.end(); ++itr)
         {
-            std::cout << c << '\n';
-            if(c==',')
+            if(temp == itr->first)
             {
-                i++;
-                c = *(bufin+i);
-                std::cout << c << '\n';
-                char val = c;
-                std::string key ="";
-                i++;
-                c = *(bufin+i);
-                while(c != ',')
-                {
-                    key += c;
-                    i++;
-                    c = *(bufin+i);
-                }
-//                decodeMap.insert({key,val});
-//                std::cout << key << val << '\n';
+//                std::cout << "\nReplace: "<< temp << ":" << itr->second << '\n';
+                temp = "";
+                decodedString += itr->second;
             }
         }
     }
-    std::cout << '\n';
-	return 1;
+    decodedString += '\n';
+    int bufLen = decodedString.size();
+    unsigned char* outputString = (unsigned char*) malloc(bufLen*sizeof(unsigned char));
+    for(int i = 0; i < bufLen; i++)
+    {
+        outputString[i] = (unsigned char) decodedString[i];
+    }
+    *pbufout = outputString;
+    *pbufoutlen = bufLen;
+    std::cout << "\nDONE DECODEING!\n";
+	return 0;
 }
