@@ -113,24 +113,24 @@ void constructTree(NodeHeap& heap, Node *tree)
 void createCodeTable(std::unordered_map<char,std::string>& codeMap, Node* root, std::string code)
 {
    Node& node = *root;
-   std::cout << "analyzing...";
-   ppNode(node);
+//   std::cout << "analyzing...";
+//   ppNode(node);
    if(node.isLeaf) 
    {
        char key = node.character; 
        codeMap.insert({key, code}); 
-       std::cout << "FOUND LEAF: ";
-       std::cout << "Inserting " << key << ':' << code << '\n';
+//       std::cout << "FOUND LEAF: ";
+//       std::cout << "Inserting " << key << ':' << code << '\n';
    }
    else
    {
       
       code += "!";
-      code[code.size()-1] = '0';
-      std::cout << "searching left\n";
-      createCodeTable(codeMap, node.leftChild, code); 
       code[code.size()-1] = '1';
-      std::cout << "searching right\n";
+//      std::cout << "searching left\n";
+      createCodeTable(codeMap, node.leftChild, code); 
+      code[code.size()-1] = '0';
+//      std::cout << "searching right\n";
       createCodeTable(codeMap, node.rightChild, code); 
    }
 }
@@ -177,19 +177,54 @@ int huffman_encode(const unsigned char *bufin,
     Node* huffmanTree = (Node*) malloc(len*sizeof(Node));
     constructTree(nodeHeap, &(huffmanTree[0]));
     rootNode = huffmanTree[len-1];
-    //4.
+    //4. Generate Huffman Code Table
     for(int i =0; i<len; i++)
     {
         ppNode(huffmanTree[i]);
     }
-    /*
     std::unordered_map<char,std::string> codeTable;
     std::string code = "";
     createCodeTable(codeTable, &huffmanTree[len-1], code);
-    std::cout << "Finished Encoding Input File\n";
+    std::string codedMessage;
+    for(int i = 0; i < bufinlen-1; i++)
+    {
+        char c = *(bufin + i);
+        codedMessage += codeTable.at(c);
+    }
+    unsigned int bufLen = codedMessage.size();
+    for(auto itr = codeTable.begin(); itr != codeTable.end(); ++itr)
+    {
+        bufLen += 2+itr->second.size(); 
+        std::cout << itr->first << ':' << itr->second << '\n'; 
+    }
+    unsigned char* compressedString = (unsigned char*) malloc(bufLen*sizeof(unsigned char));
+    i = 0;
+    for(auto itr = codeTable.begin(); itr != codeTable.end(); ++itr)
+    {
+        compressedString[i] = ',';
+        i++;
+        compressedString[i] = itr->first;
+        i++;
+        std::string& s = itr->second;
+        for(int j=0; j < s.size(); j++)
+        {
+            compressedString[i] = s[j];
+            i++;
+        }
+    }
+    compressedString[i] = '\n';
+    i++;
+    for(int k = 0; k < codedMessage.size(); k++)
+    {
+        compressedString[i] = codedMessage[k];
+        i++;
+    }
+    std::cout << compressedString << '\n';
+    *pbufout = compressedString; 
+    *pbufoutlen = bufLen;
     free(huffmanTree);
-    */
-    return 1; 
+    std::cout << "Finished Encoding Input File\n";
+    return 0; 
 }
 
 /**
@@ -201,5 +236,35 @@ int huffman_decode(const unsigned char *bufin,
 						  unsigned int *pbufoutlen)
 {
     std::cout << "Decoding Input File\n";
-	return 0;
+    bool readingHeader = true;
+    std::unordered_map<std::string,char> decodeMap;
+    int k = 0;
+    for(int i = 0; i < bufinlen; i++)
+    {
+        char c = *(bufin+i);
+        while(c!='\n')
+        {
+            std::cout << c << '\n';
+            if(c==',')
+            {
+                i++;
+                c = *(bufin+i);
+                std::cout << c << '\n';
+                char val = c;
+                std::string key ="";
+                i++;
+                c = *(bufin+i);
+                while(c != ',')
+                {
+                    key += c;
+                    i++;
+                    c = *(bufin+i);
+                }
+//                decodeMap.insert({key,val});
+//                std::cout << key << val << '\n';
+            }
+        }
+    }
+    std::cout << '\n';
+	return 1;
 }
