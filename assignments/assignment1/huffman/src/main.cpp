@@ -64,11 +64,18 @@ int main(int argc, const char * argv[])
 	{ cerr << "Huffman decode failed with code " << ret << endl; return EXIT_FAILURE; }
 
 
+    std::cout << decode;
+    std::cout << '\n';
+    std::cout << (const char*)decode;
+    std::cout << '\n';
 	// Save output to file
 	if(decode)
 	{
 		ofstream out(out_filename);
+        std::cout << (const char*)decode;
 		out << (const char*)decode;
+        out << '\n';
+//        out << "JOEY WAZ HERE";
 	}
 
 

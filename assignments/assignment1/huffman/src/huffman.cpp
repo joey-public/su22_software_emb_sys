@@ -143,12 +143,14 @@ int huffman_encode(const unsigned char *bufin,
 						  unsigned char **pbufout,
 						  unsigned int *pbufoutlen)
 {
-    std::cout << "Encoding Input File\n";
+    std::cout << "\nEncoding Input File\n";
+    std::string input_string = "";
     //1. create map of char and frequency 
     std::unordered_map<char, int> symFreqMap = {};
     for(int i = 0; i < bufinlen-1; i++)
     {
         char key = *(bufin + i);
+        input_string += key;
         if(symFreqMap.count(key) == 0)
         {
             symFreqMap.insert({key,1}); 
@@ -166,11 +168,9 @@ int huffman_encode(const unsigned char *bufin,
         n.frequency = itr->second;
         nodeMap.insert({i,n});
         i ++;
- //       std::cout <<  n.isLeaf << ", " << n.character  << ", " << n.frequency << '\n';
     }
     NodeHeap nodeHeap;
     nodeHeap.map = nodeMap;
-//    ppNodeHeap(nodeHeap);
     //3. Construct the huffman tree 
     Node rootNode;
     int len = 2*nodeHeap.map.size()-1;
@@ -178,10 +178,6 @@ int huffman_encode(const unsigned char *bufin,
     constructTree(nodeHeap, &(huffmanTree[0]));
     rootNode = huffmanTree[len-1];
     //4. Generate Huffman Code Table
-//    for(int i =0; i<len; i++)
-//    {
-//        ppNode(huffmanTree[i]);
-//    }
     std::unordered_map<char,std::string> codeTable;
     std::string code = "";
     createCodeTable(codeTable, &huffmanTree[len-1], code);
@@ -195,7 +191,6 @@ int huffman_encode(const unsigned char *bufin,
     for(auto itr = codeTable.begin(); itr != codeTable.end(); ++itr)
     {
         bufLen += 2+itr->second.size(); 
-        std::cout << itr->first << ':' << itr->second << '\n'; 
     }
     unsigned char* compressedString = (unsigned char*) malloc(bufLen*sizeof(unsigned char));
     i = 0;
@@ -219,11 +214,12 @@ int huffman_encode(const unsigned char *bufin,
         compressedString[i] = codedMessage[k];
         i++;
     }
-//    std::cout << compressedString << '\n';
     *pbufout = compressedString; 
+    bufLen += 1;
     *pbufoutlen = bufLen;
     free(huffmanTree);
-    std::cout << "Finished Encoding Input File\n";
+    std::cout << "input str..." << input_string << '(' << input_string.size() << ")\n";
+    std::cout << "Finished Encoding Input File\n\n";
     return 0; 
 }
 
@@ -237,13 +233,12 @@ int huffman_decode(const unsigned char *bufin,
 {
     std::cout << "Decoding Input File\n";
     bool readingHeader = true;
-    std::unordered_map<std::string,char> decodeMap;
+    std::unordered_map<std::string,unsigned char> decodeMap;
     int i = 0;
-    char c = *bufin;
-    std::cout << "CODE:\n";
+    unsigned char c = *bufin;
     std::string key = "$";
     std::string decodedString ="";
-    char value = '-';
+    unsigned char value = '-';
     while(c != '\n')
     {
         c = *(bufin+i);
@@ -265,36 +260,37 @@ int huffman_decode(const unsigned char *bufin,
                 c = *(bufin+i);
             }
             decodeMap.insert({key, value});
-            std::cout << "Found->" << key << ":" << value << '\n';
         }
     }
     i+=1;
-    std::cout << "MESSAGE:\n";
     std::string temp = "";
     for(i; i < bufinlen; i++)
     {
         char c = *(bufin+i);
         temp += c;
- //       std::cout << "curChar: " << c << ", temp: " << temp;
         for(auto itr = decodeMap.begin(); itr != decodeMap.end(); ++itr)
         {
             if(temp == itr->first)
             {
-//                std::cout << "\nReplace: "<< temp << ":" << itr->second << '\n';
                 temp = "";
                 decodedString += itr->second;
             }
         }
     }
-    decodedString += '\n';
+//    decodedString += '\n';
     int bufLen = decodedString.size();
+    int idx = 0;
     unsigned char* outputString = (unsigned char*) malloc(bufLen*sizeof(unsigned char));
+    int x;
     for(int i = 0; i < bufLen; i++)
     {
-        outputString[i] = (unsigned char) decodedString[i];
+        *(outputString+i) = (unsigned char) decodedString[i];
+        x=i;
     }
     *pbufout = outputString;
     *pbufoutlen = bufLen;
+    std::cout << "output str.." << decodedString << '(' << bufLen <<")\n";
+    std::cout << "output buf.." << outputString << '(' << x << ")\n";
     std::cout << "\nDONE DECODEING!\n";
 	return 0;
 }
