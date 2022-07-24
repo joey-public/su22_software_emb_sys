@@ -145,7 +145,7 @@ int huffman_encode(const unsigned char *bufin,
 {
     std::cout << "\nEncoding Input File\n";
     std::string input_string = "";
-    //1. create map of char and frequency 
+    //create map of char and frequency 
     std::unordered_map<char, int> symFreqMap = {};
     for(int i = 0; i < bufinlen-1; i++)
     {
@@ -157,7 +157,7 @@ int huffman_encode(const unsigned char *bufin,
         }
         else{ symFreqMap.at(key) += 1; }
     }
-    //2. transfer data to a node Heap 
+    //transfer data to a node Heap 
     std::unordered_map<int, Node> nodeMap= {};
     int i = 0;
     for(auto itr=symFreqMap.begin(); itr!=symFreqMap.end(); ++itr)
@@ -171,55 +171,109 @@ int huffman_encode(const unsigned char *bufin,
     }
     NodeHeap nodeHeap;
     nodeHeap.map = nodeMap;
-    //3. Construct the huffman tree 
+    //Construct the huffman tree 
     Node rootNode;
     int len = 2*nodeHeap.map.size()-1;
     Node* huffmanTree = (Node*) malloc(len*sizeof(Node));
     constructTree(nodeHeap, &(huffmanTree[0]));
     rootNode = huffmanTree[len-1];
-    //4. Generate Huffman Code Table
+    //Traverse Tree and Generate Huffman Code Table
     std::unordered_map<char,std::string> codeTable;
     std::string code = "";
     createCodeTable(codeTable, &huffmanTree[len-1], code);
+    //Make a string of 1's and zeros based on huffman Table
     std::string codedMessage;
     for(int i = 0; i < bufinlen-1; i++)
     {
         char c = *(bufin + i);
         codedMessage += codeTable.at(c);
     }
-    unsigned int bufLen = codedMessage.size();
-    for(auto itr = codeTable.begin(); itr != codeTable.end(); ++itr)
+    //Make a string to represent the codeTable
+    std::string codedCodeTable="";
+    for(auto itr = codeTable.begin(); itr!=codeTable.end(); ++itr)
     {
-        bufLen += 2+itr->second.size(); 
+        codedCodeTable += ",";
+        codedCodeTable += itr->first;
+        codedCodeTable += itr->second;
     }
-    unsigned char* compressedString = (unsigned char*) malloc(bufLen*sizeof(unsigned char));
-    i = 0;
-    for(auto itr = codeTable.begin(); itr != codeTable.end(); ++itr)
+    codedCodeTable += '\n';
+    int codedCodeTableSize = codedCodeTable.size();
+    //Make a string for the code header
+    int codeHeaderSie = 2;
+    unsigned char codeHeader[2];
+    codeHeader[0] = (unsigned char) (8-codedMessage.size()%8);
+    codeHeader[1] = '\n';
+    //Compress the coded Message to byte array
+    int compressedMessageSize = (int) codedMessage.size()/8;
+    compressedMessageSize += 1;
+    unsigned char compressedMessage[compressedMessageSize];
+    std::cout << "\n********\n";
+    std::string temp = "";
+    int k = 0;
+    for(int i=0; i<8*compressedMessageSize; i++)
     {
-        compressedString[i] = ',';
-        i++;
-        compressedString[i] = itr->first;
-        i++;
-        std::string& s = itr->second;
-        for(int j=0; j < s.size(); j++)
+        if(i < codedMessage.size())
         {
-            compressedString[i] = s[j];
-            i++;
+            temp += codedMessage[i];
+        }
+        else
+        {
+            std::cout << "zero padding\n";
+            temp += '0';
+        }
+        if(temp.size()%8 == 0)
+        {
+            std::cout << temp << '\n';
+            unsigned char curByte = 0x00; 
+            for(int j = 0; j < 8; j++)
+            {
+                char bit = temp[j];
+                curByte <<= 1;
+                if (bit=='1'){
+                    curByte |= 0x01;
+                }
+            }
+            temp = "";
+            compressedMessage[k] = curByte;
+            k+=1;
         }
     }
-    compressedString[i] = '\n';
-    i++;
-    for(int k = 0; k < codedMessage.size(); k++)
+     
+    std::cout << codedCodeTableSize << ", " << codeHeaderSie << ", " << compressedMessageSize << '\n';
+    std::cout << codedCodeTableSize + codeHeaderSie + compressedMessageSize;
+    std::cout << "\n********\n";
+    std::cout << input_string << '\n';
+    std::cout << codedCodeTable;
+    std::cout << codedMessage << '\n';
+    for(int d = 0; d<compressedMessageSize; d++)
     {
-        compressedString[i] = codedMessage[k];
-        i++;
+        std::cout << std::hex << (int)compressedMessage[d] << '\n';
     }
-    *pbufout = compressedString; 
-    bufLen += 1;
-    *pbufoutlen = bufLen;
+    std::cout << "\n********\n";
+    //Allocate memory for pbufout to hold table, code header, and compressedMessage 
+    int outStreamSize = codedCodeTableSize + codeHeaderSie + compressedMessageSize;
+    unsigned char* outStream = (unsigned char*) malloc(outStreamSize*sizeof(unsigned char));
+    //fill the outStream with unsigned chars
+    for(int i = 0; i < outStreamSize; i++)
+    {
+        if (i < codedCodeTableSize)
+        {
+            outStream[i] = (unsigned char) codedCodeTable[i];
+        }
+        else if(i < codedCodeTableSize + codeHeaderSie)
+        {
+            outStream[i] = codeHeader[i-(codedCodeTableSize)];
+        }
+        else
+        {
+            outStream[i] = compressedMessage[i-(codedCodeTableSize+codeHeaderSie)];
+        }
+    }
+    //set pbufout and pbufoutlen
+    *pbufoutlen = outStreamSize;
+    *pbufout = outStream;
+    //free memory
     free(huffmanTree);
-    std::cout << "input str..." << input_string << '(' << input_string.size() << ")\n";
-    std::cout << "Finished Encoding Input File\n\n";
     return 0; 
 }
 
@@ -231,13 +285,12 @@ int huffman_decode(const unsigned char *bufin,
 						  unsigned char **pbufout,
 						  unsigned int *pbufoutlen)
 {
-    std::cout << "Decoding Input File\n";
-    bool readingHeader = true;
+    std::cout << "\nDecoding\n";
+    //convert first line of buf in to a hash map
     std::unordered_map<std::string,unsigned char> decodeMap;
     int i = 0;
     unsigned char c = *bufin;
     std::string key = "$";
-    std::string decodedString ="";
     unsigned char value = '-';
     while(c != '\n')
     {
@@ -262,35 +315,37 @@ int huffman_decode(const unsigned char *bufin,
             decodeMap.insert({key, value});
         }
     }
-    i+=1;
-    std::string temp = "";
-    for(i; i < bufinlen; i++)
+    i+= 1;
+    //convert the second line to an integer
+    int pad = *(bufin+i);
+    i+=2;
+    //convert the third line to a char array of 1s and 0s
+    std::string bitString = "";
+    while(i < bufinlen)
     {
-        char c = *(bufin+i);
-        temp += c;
-        for(auto itr = decodeMap.begin(); itr != decodeMap.end(); ++itr)
+        unsigned char byte = *(bufin +i);
+      //  std::cout << '\n';
+        std::cout << std::hex << (int) byte << '\n';
+/*        for(int k=0; k<8; k++)
         {
-            if(temp == itr->first)
+            bool isOne = ((byte >> k) & 1);
+            if(isOne)
             {
-                temp = "";
-                decodedString += itr->second;
+                std::cout << '1';
+                bitString += '1';
+            }
+            else
+            {
+                std::cout << '0';
+                bitString += '0';
             }
         }
+*/
+        i+=1;
     }
-//    decodedString += '\n';
-    int bufLen = decodedString.size();
-    int idx = 0;
-    unsigned char* outputString = (unsigned char*) malloc(bufLen*sizeof(unsigned char));
-    int x;
-    for(int i = 0; i < bufLen; i++)
-    {
-        *(outputString+i) = (unsigned char) decodedString[i];
-        x=i;
-    }
-    *pbufout = outputString;
-    *pbufoutlen = bufLen;
-    std::cout << "output str.." << decodedString << '(' << bufLen <<")\n";
-    std::cout << "output buf.." << outputString << '(' << x << ")\n";
-    std::cout << "\nDONE DECODEING!\n";
-	return 0;
+    std::cout << '\n' << bitString << '\n';
+
+    //loop through char array and crate output char array
+    // 
+	return 1;
 }

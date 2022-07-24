@@ -33,7 +33,6 @@ int main(int argc, const char * argv[])
 	int ret;
 	ret = huffman_encode((unsigned char*)in_contents.c_str(), in_contents.size(), &code, &code_size);
 
-
 	if(ret != 0)
 	{  cerr << "Huffman encode failed with code " << ret << endl; return EXIT_FAILURE; }
 
