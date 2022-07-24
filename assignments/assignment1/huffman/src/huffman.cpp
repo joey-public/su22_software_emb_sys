@@ -244,7 +244,7 @@ int huffman_encode(const unsigned char *bufin,
     std::cout << "\n********\n";
     std::cout << input_string << '\n';
     std::cout << codedCodeTable;
-    std::cout << codedMessage << '\n';
+    std::cout << codedMessage << "("<< codedMessage.size()<< ")\n";
     for(int d = 0; d<compressedMessageSize; d++)
     {
         std::cout << std::hex << (int)compressedMessage[d] << '\n';
@@ -325,10 +325,10 @@ int huffman_decode(const unsigned char *bufin,
     {
         unsigned char byte = *(bufin +i);
       //  std::cout << '\n';
-        std::cout << std::hex << (int) byte << '\n';
-/*        for(int k=0; k<8; k++)
+//        std::cout << std::hex << (int) byte << '\n';
+        for(int k=0; k<8; k++)
         {
-            bool isOne = ((byte >> k) & 1);
+            bool isOne = ((byte >> (7-k)) & 1);
             if(isOne)
             {
                 std::cout << '1';
@@ -336,16 +336,42 @@ int huffman_decode(const unsigned char *bufin,
             }
             else
             {
-                std::cout << '0';
+               std::cout << '0';
                 bitString += '0';
             }
         }
-*/
+        std::cout << '\n';
         i+=1;
     }
-    std::cout << '\n' << bitString << '\n';
-
     //loop through char array and crate output char array
-    // 
-	return 1;
+    std::string temp = "";
+    std::string decodedString = "";
+    int len = bitString.size()-(int)pad;
+    std::cout << '\n' << bitString << '(' << std::dec <<bitString.size() << ',' << len << ')' << '\n';
+    for(int i; i < len; i++)
+    {
+        
+        temp += bitString[i];
+        for(auto itr = decodeMap.begin(); itr != decodeMap.end(); ++itr)
+        {
+            if(temp == itr->first)
+            {
+                temp = "";
+                decodedString += itr->second;
+            }
+        }
+    }
+    std::cout << '\n' << decodedString << '(' << std::dec <<decodedString.size() << ')'<< '\n';
+    //allocate memory for the ouput buffer
+    int outStreamSize = decodedString.size()+1; 
+    unsigned char* outStream = (unsigned char*) malloc(outStreamSize*sizeof(unsigned char));
+    //convert the decoded string to character array
+    for(int i = 0; i < outStreamSize; i++)
+    {
+        outStream[i] = decodedString[i];
+    }
+    *pbufoutlen = outStreamSize;
+    *pbufout = outStream;
+    std::cout << "\nDone Decoding\n";
+	return 0;
 }
