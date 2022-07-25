@@ -2,6 +2,7 @@
 # 07-24-2022
 
 ## Compile and Run Instructions
+1. Download all the files in the assignment1 folder.
 1. On a Linux Machine navigate to the huffman directory.
 2. Compile the code using Make with the following terminal command:
     ```
