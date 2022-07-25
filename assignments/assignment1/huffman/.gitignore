@@ -1,4 +1,7 @@
 CODEC
 
-*.txt
+*.obj
+*.swp
 !input.txt
+.vs
+.vscode

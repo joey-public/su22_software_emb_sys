@@ -8,7 +8,6 @@
 
 struct Node{
     bool isLeaf=false;
-    bool traversed=false;
     char character='*';
     int frequency=0;
     Node* parent=nullptr;
@@ -207,7 +206,7 @@ int huffman_encode(const unsigned char *bufin,
     int compressedMessageSize = (int) codedMessage.size()/8;
     compressedMessageSize += 1;
     unsigned char compressedMessage[compressedMessageSize];
-    std::cout << "\n********\n";
+//    std::cout << "\n********\n";
     std::string temp = "";
     int k = 0;
     for(int i=0; i<8*compressedMessageSize; i++)
@@ -218,12 +217,12 @@ int huffman_encode(const unsigned char *bufin,
         }
         else
         {
-            std::cout << "zero padding\n";
+//            std::cout << "zero padding\n";
             temp += '0';
         }
         if(temp.size()%8 == 0)
         {
-            std::cout << temp << '\n';
+//            std::cout << temp << '\n';
             unsigned char curByte = 0x00; 
             for(int j = 0; j < 8; j++)
             {
@@ -241,15 +240,15 @@ int huffman_encode(const unsigned char *bufin,
      
     std::cout << codedCodeTableSize << ", " << codeHeaderSie << ", " << compressedMessageSize << '\n';
     std::cout << codedCodeTableSize + codeHeaderSie + compressedMessageSize;
-    std::cout << "\n********\n";
-    std::cout << input_string << '\n';
-    std::cout << codedCodeTable;
-    std::cout << codedMessage << "("<< codedMessage.size()<< ")\n";
-    for(int d = 0; d<compressedMessageSize; d++)
-    {
-        std::cout << std::hex << (int)compressedMessage[d] << '\n';
-    }
-    std::cout << "\n********\n";
+//    std::cout << "\n********\n";
+//    std::cout << input_string << '\n';
+//    std::cout << codedCodeTable;
+//    std::cout << codedMessage << "("<< codedMessage.size()<< ")\n";
+//    for(int d = 0; d<compressedMessageSize; d++)
+//    {
+//        std::cout << std::hex << (int)compressedMessage[d] << '\n';
+//    }
+//    std::cout << "\n********\n";
     //Allocate memory for pbufout to hold table, code header, and compressedMessage 
     int outStreamSize = codedCodeTableSize + codeHeaderSie + compressedMessageSize;
     unsigned char* outStream = (unsigned char*) malloc(outStreamSize*sizeof(unsigned char));
@@ -331,23 +330,23 @@ int huffman_decode(const unsigned char *bufin,
             bool isOne = ((byte >> (7-k)) & 1);
             if(isOne)
             {
-                std::cout << '1';
+//                std::cout << '1';
                 bitString += '1';
             }
             else
             {
-               std::cout << '0';
+//               std::cout << '0';
                 bitString += '0';
             }
         }
-        std::cout << '\n';
+//        std::cout << '\n';
         i+=1;
     }
     //loop through char array and crate output char array
     std::string temp = "";
     std::string decodedString = "";
     int len = bitString.size()-(int)pad;
-    std::cout << '\n' << bitString << '(' << std::dec <<bitString.size() << ',' << len << ')' << '\n';
+//    std::cout << '\n' << bitString << '(' << std::dec <<bitString.size() << ',' << len << ')' << '\n';
     for(int i; i < len; i++)
     {
         
@@ -361,7 +360,7 @@ int huffman_decode(const unsigned char *bufin,
             }
         }
     }
-    std::cout << '\n' << decodedString << '(' << std::dec <<decodedString.size() << ')'<< '\n';
+//    std::cout << '\n' << decodedString << '(' << std::dec <<decodedString.size() << ')'<< '\n';
     //allocate memory for the ouput buffer
     int outStreamSize = decodedString.size()+1; 
     unsigned char* outStream = (unsigned char*) malloc(outStreamSize*sizeof(unsigned char));
