@@ -9,5 +9,5 @@
 //  @param     vec1 First (3D) vector
 //  @param     vec2 Second (3D) vector
 //  @return        Cross product of the vectors
-Eigen::VectorXf cross_product_3d(Eigen::VectorXf vec1, Eigen::VectorXf vec2);
+Eigen::Vector3f cross_product(Eigen::Vector3f vec1, Eigen::Vector3f vec2);
 #endif // VECMUL_H

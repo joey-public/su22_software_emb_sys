@@ -17,9 +17,10 @@ bool test_dot(Eigen::VectorXf vec1, Eigen::VectorXf vec2, uint32_t length) {
 
 	return eigen_result == our_result;
 }
-bool test_cross(Eigen::VectorXf vec1, Eigen::VectorXf vec2) {
-	Eigen::Vector3d eigen_result = vec1.cross(vec2);
-	Eigen::VectorXf our_result = cross_product_3d(vec1, vec2);
+bool test_cross(Eigen::Vector3f vec1, Eigen::Vector3f vec2) {
+	Eigen::Vector3f eigen_result,a,b;
+	eigen_result = vec1.cross(vec2);
+	Eigen::VectorXf our_result = cross_product(vec1, vec2);
 
     std::cout << (eigen_result==our_result) << '\n';
 	// Only check precision to four decimal places

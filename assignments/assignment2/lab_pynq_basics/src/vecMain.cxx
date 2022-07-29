@@ -44,6 +44,8 @@ int main(int argc, const char* argv[]) {
     cout << "dot(m,v): " << dot_product(x,y,len) << endl; 
 
     printf("--Cross Product--\n");
+    std::cout << x[0] << ',' << x[1] << ',' << x[2];
+
 	if (test_cross(x, y)) {
 		printf("Test passed\n");
 	}
@@ -53,7 +55,8 @@ int main(int argc, const char* argv[]) {
 	}
     cout << "x: \n" << x << endl;
     cout << "y: \n" << y << endl;
-    cout << "cross(m,v): " << cross_product_3d(x,y) << endl; 
+    cout << "cross(m,v): " << cross_product(x,y) << endl; 
+    printf("End\n");
 	/*
 		TODO-- Connect!
 
