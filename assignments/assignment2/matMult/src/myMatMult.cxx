@@ -1,16 +1,32 @@
 #include <iostream>
+#include <opencv2/opencv.hpp>
 
 void myMatMult(int rows, int cols, 
-                float* matrixA, float* matrixB, float* matrixOut)
+                float* mat1, float* mat2, float* matOut)
 { 
-    for(int k=0; k<rows*cols; k++){
-        int r = k / rows;
-        int c = k % cols;
-        for(int i=0; i<cols; i++){
-            for(int j=0; j<rows; j++){
-                std::cout << "[" << r << "][" << c << "]: ";
-                std::cout << *(matrixB+k) << '\n';;
-            }
+    int r = -cols;
+    for (int i = 0; i < rows * cols; i++) {
+        *(matOut + i) = 0.0f;
+        if (i % cols==0) { r += cols; }
+        for (int c = 0; c < cols; c++) {
+            int aIdx = r + c;
+            int bIdx = i%cols + rows*c;
+            *(matOut + i) += *(mat1 + aIdx) * *(mat2 + bIdx);
         }
     }
+}
+
+void openCvMatMult(int rows, int cols,  
+                float* mat1, float* mat2, float* matOut)
+{
+    cv::Mat a = cv::Mat(rows,cols,CV_32F,mat1);
+    cv::Mat b = cv::Mat(rows,cols,CV_32F,mat2);
+    cv::Mat c = (a*b);
+    c.resize(1,rows*cols); 
+    matOut = &(c.at<float>(0,0));
+}
+
+void eigenMatMult(int rows, int cols,  
+                float* mat1, float* mat2, float* matOut)
+{
 }
