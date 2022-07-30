@@ -24,6 +24,13 @@ void openCvMatMult(int rows, int cols,
     cv::Mat c = (a*b);
     c.resize(1,rows*cols); 
     matOut = &(c.at<float>(0,0));
+    std::cout << "\nOpenCV\n";
+    std::cout << matOut << '\n';
+    a.resize(1,rows*cols);
+    float* ptr = &(c.at<float>(0,0));
+    for(int i=0; i<rows*cols; i++){
+        std::cout << c.at<float>(0,i) << ":" << *(ptr+i) <<'\n';
+    }
 }
 
 void eigenMatMult(int rows, int cols,  
