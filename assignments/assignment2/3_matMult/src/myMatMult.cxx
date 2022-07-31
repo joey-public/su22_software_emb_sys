@@ -1,5 +1,6 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <eigen3/Eigen/Dense>
 
 void myMatMult(int rows, int cols, 
                 float* mat1, float* mat2, float* matOut)
@@ -26,28 +27,15 @@ float* cvMatToPtrArray(cv::Mat cvMat){
     return &(cvMat.at<float>(0,0));
 }
 
-/*
-void openCvMatMult(int rows, int cols,  
-                float* mat1, float* mat2, float*& matOut)
-{
-    cv::Mat a = cv::Mat(rows,cols,CV_32F,mat1);
-    cv::Mat b = cv::Mat(rows,cols,CV_32F,mat2);
-    cv::Mat c = (a*b);
-    c.resize(1,rows*cols); 
-    matOut = &(c.at<float>(0,0));
-    std::cout << "\nOpenCV\n";
-    std::cout << matOut << '\n';
-    std::cout << &matOut << '\n';
-    std::cout << "End OpenCv\n";
-    a.resize(1,rows*cols);
-    float* ptr = &(c.at<float>(0,0));
-    for(int i=0; i<rows*cols; i++){
-//        std::cout << c.at<float>(0,i) << ":" << *(ptr+i) <<'\n';
-    }
+Eigen::Matrix<float,-1,-1,Eigen::RowMajor> ptrArrayToEigenMat(int rows, int cols, float* mat){
+    Eigen::Map<
+        Eigen::Matrix<
+            float,-1,-1,Eigen::RowMajor>>
+                 eMat(mat,rows,cols);
+    return eMat; 
 }
-*/
 
-void eigenMatMult(int rows, int cols,  
-                float* mat1, float* mat2, float* matOut)
-{
+float* eigenMatToPtrArray(Eigen::Matrix<float,-1,-1,Eigen::RowMajor> eMat){
+    Eigen::Map<Eigen::RowVectorXf> eVec(eMat.data(), eMat.size());
+    return &(eVec[0]);
 }

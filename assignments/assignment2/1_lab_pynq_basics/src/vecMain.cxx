@@ -57,10 +57,4 @@ int main(int argc, const char* argv[]) {
     cout << "y: \n" << y << endl;
     cout << "cross(m,v): " << cross_product(x,y) << endl; 
     printf("End\n");
-	/*
-		TODO-- Connect!
-
-	// Test the methods
-	*/
 }
-

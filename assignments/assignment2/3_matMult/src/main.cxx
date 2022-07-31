@@ -1,5 +1,6 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <eigen3/Eigen/Dense>
 #include "myMatMult.h"
 
 void printMat(int rows, int cols, float* mat) {
@@ -22,15 +23,29 @@ int main(){
     float a[ROWS][COLS] = { {1.0,2.0,3.0}, {4.0,5.0,6.0}, {7.0,8.0,9.0} };
     float b[ROWS][COLS] = { {1.0,2.0,1.0}, {3.0,1.0,7.0}, {5.0,3.0,5.3} };
     float customOut[ROWS][COLS] = { {0.0,0.0,0.0}, {0.0,0.0,0.0}, {0.0,0.0,0.0} };
+    //Custom Naive 
     myMatMult(ROWS, COLS, &a[0][0], &b[0][0], &(customOut[0][0]));
+    std::cout << "\nNaive Results: \n----------\n";
+    printMat(ROWS,COLS,&(customOut[0][0])); 
     //OpenCv
     cv::Mat cvMatA = ptrArrayToCvMat(ROWS,COLS,&(a[0][0]));
     cv::Mat cvMatB = ptrArrayToCvMat(ROWS,COLS,&(b[0][0]));
     cv::Mat cvMatC = cvMatA*cvMatB;
     float* openCvOut = cvMatToPtrArray(cvMatC);
+    std::cout << "\nOpenCv Results: \n----------\n";
+    std::cout << cvMatC << std::endl;
     for(int i=0; i < 9; i++){
         std::cout << openCvOut+i << ":" << *(openCvOut + i) << '\n';
     }
     //Eigen
+    Eigen::Matrix<float,-1,-1,Eigen::RowMajor> eigenMatA = ptrArrayToEigenMat(ROWS,COLS,&(a[0][0]));
+    Eigen::Matrix<float,-1,-1,Eigen::RowMajor> eigenMatB = ptrArrayToEigenMat(ROWS,COLS,&(b[0][0]));
+    Eigen::Matrix<float,-1,-1,Eigen::RowMajor> eigenMatC = eigenMatA*eigenMatB;
+    float* eigenOut = eigenMatToPtrArray(eigenMatC);
+    std::cout << "\nEigen Results: \n----------\n";
+    std::cout << eigenMatC << std::endl;
+    for(int i=0; i < 9; i++){
+        std::cout << eigenOut+i << ":" << *(eigenOut + i) << '\n';
+    }
 	return 0;
 }

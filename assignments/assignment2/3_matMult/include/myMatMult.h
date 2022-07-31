@@ -7,9 +7,7 @@ void myMatMult(int rows, int cols,
 
 cv::Mat ptrArrayToCvMat(int rows, int cols, float* mat);
 float* cvMatToPtrArray(cv::Mat cvMat);
-void openCvMatMult(int rows, int cols,  
-                float* mat1, float* mat2, float* matOut);
 
-void eigenMatMult(int rows, int cols,  
-                float* mat1, float* mat2, float* matOut);
+Eigen::Matrix<float,-1,-1,Eigen::RowMajor> ptrArrayToEigenMat(int rows, int cols, float* mat);
+float* eigenMatToPtrArray(Eigen::Matrix<float,-1,-1,Eigen::RowMajor> eMat);
 #endif
