@@ -1,7 +1,0 @@
-CODEC
-
-*.obj
-*.swp
-!input.txt
-.vs
-.vscode
