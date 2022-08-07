@@ -7,9 +7,6 @@
 *.o
 *.obj
 
-# Images
-*.tif
-
 # Precompiled Headers
 *.gch
 *.pch
@@ -33,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Images
+*.tif
+#Notebooks
+*.ipynb
+
