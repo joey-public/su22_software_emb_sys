@@ -11,6 +11,7 @@ void printMat(int rows, int cols, float* mat) {
     }
     std::cout << "-----" << std::endl;
 }
+
 bool equal(int rows, int cols, float* mat1, float* mat2){
     for (int i = 0; i < rows * cols; i++) {
         if (*(mat1+i) != *(mat2+i)) { return false; }
@@ -31,7 +32,6 @@ int main(){
     unsigned int c2 = get_cyclecount();
     std::cout << "\nNaive Results: \n----------\n";
     std::cout << "Clock Cycles: " << c2-c1 << std::endl;
-    std::cout << "Time Est: " << c2-c1 << std::endl;
     printMat(ROWS,COLS,&(customOut[0][0])); 
     //OpenCv
     cv::Mat cvMatA = ptrArrayToCvMat(ROWS,COLS,&(a[0][0]));
@@ -42,11 +42,7 @@ int main(){
     float* openCvOut = cvMatToPtrArray(cvMatC);
     std::cout << "\nOpenCv Results: \n----------\n";
     std::cout << "Clock Cycles: " << c2-c1 << std::endl;
-    std::cout << "Time Est: " << c2-c1 << std::endl;
     std::cout << cvMatC << std::endl;
-//    for(int i=0; i < 9; i++){
-//        std::cout << openCvOut+i << ":" << *(openCvOut + i) << '\n';
-//    }
     //Eigen
     Eigen::Matrix<float,-1,-1,Eigen::RowMajor> eigenMatA = ptrArrayToEigenMat(ROWS,COLS,&(a[0][0]));
     Eigen::Matrix<float,-1,-1,Eigen::RowMajor> eigenMatB = ptrArrayToEigenMat(ROWS,COLS,&(b[0][0]));
@@ -56,11 +52,6 @@ int main(){
     float* eigenOut = eigenMatToPtrArray(eigenMatC);
     std::cout << "\nEigen Results: \n----------\n";
     std::cout << "Clock Cycles: " << c2-c1 << std::endl;
-    std::cout << "Time Est: " << c2-c1 << std::endl;
     std::cout << eigenMatC << std::endl;
-//    for(int i=0; i < 9; i++){
-//        std::cout << eigenOut+i << ":" << *(eigenOut + i) << '\n';
-//    }
-
 	return 0;
 }

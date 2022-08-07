@@ -1,7 +1,7 @@
 #include "main.h"
 #include "timer.h"
 
-#define FRAME_NUMBER 1 //set to 0 or -1 to run while loop
+#define FRAME_NUMBER 5 //set to 0 or -1 to run while loop
 
 using namespace std;
 using namespace cv;
@@ -50,11 +50,11 @@ int main(int argc, const char * argv[])
 	{
 		cap >> frame;
 		if(frame.empty()){ break; }
-imwrite("frame.tif",frame);
+//imwrite("images/frame.tif",frame);
 		cvtColor(frame, gray, COLOR_BGR2GRAY);
-imwrite("frame_gray.tif",gray);
+//imwrite("images/frame_gray.tif",gray);
 		resize(gray, gray, Size(WIDTH, HEIGHT));
-imwrite("dct_input.tif", gray);
+imwrite("images/dct_input.tif", gray);
 		gray.convertTo(gray, CV_32FC1);
 		// OpenCV DCT
 		dct(gray, dct_org);
@@ -79,12 +79,11 @@ imwrite("dct_input.tif", gray);
 		idct(dct_student, inverse);
 		inverse.convertTo(inverse, CV_8U);
 
-dct_org.convertTo(dct_org, CV_8UC1);
-imwrite("dct_org.tif",dct_org);
-dct_org.convertTo(dct_student, CV_8UC1);
-imwrite("dct_student.tif",dct_student);
-imwrite("myInv.tif", inverse);
-imwrite("myInv.tif", inverse);
+    dct_org.convertTo(dct_org, CV_8UC1);
+    imwrite("images/dct_org.tif",dct_org);
+    dct_org.convertTo(dct_student, CV_8UC1);
+    imwrite("images/dct_student.tif",dct_student);
+    imwrite("images/myInv.tif", inverse);
         
 #ifndef __arm__
 		imshow("Original", gray);

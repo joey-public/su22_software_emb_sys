@@ -44,17 +44,19 @@ int main(int argc, const char* argv[]) {
     cout << "dot(m,v): " << dot_product(x,y,len) << endl; 
 
     printf("--Cross Product--\n");
-    std::cout << x[0] << ',' << x[1] << ',' << x[2];
+    Eigen::Vector3f w(1.0f,2.0f,3.0f);
+    Eigen::Vector3f z(4.0f,5.0f,6.0f);
+    std::cout << w[0] << ',' << w[1] << ',' << w[2];
 
-	if (test_cross(x, y)) {
+	if (test_cross(w, z)) {
 		printf("Test passed\n");
 	}
 	else {
 		printf("Test failed\n");
 		return 1;
 	}
-    cout << "x: \n" << x << endl;
-    cout << "y: \n" << y << endl;
-    cout << "cross(m,v): " << cross_product(x,y) << endl; 
+    cout << "w: \n" << w << endl;
+    cout << "z: \n" << z << endl;
+    cout << "cross(m,v): " << cross_product(w,z) << endl; 
     printf("End\n");
 }

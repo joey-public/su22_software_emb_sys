@@ -15,12 +15,12 @@ using namespace cv;
 
 int main(int argc, const char * argv[]) {
 	// Read the mode 
-	int mode = std::stoi(argv[1]);
+	int mode = stoi(argv[1]);
 
 	Mat image;
 
 	//Read in the image and store it in a matrix
-	image = imread("image.tif");
+	image = imread("images/image.tif");
 
 	//Convert the image to grayscale
 	Mat gray;
@@ -30,7 +30,7 @@ int main(int argc, const char * argv[]) {
 #ifndef __arm__
 	imshow("Original Color", image);
 #else
-	imwrite("original_color.tif", gray);
+	imwrite("images/original_color.tif", gray);
 #endif
 
 	cvtColor(image, gray, COLOR_BGR2GRAY);
@@ -45,12 +45,12 @@ int main(int argc, const char * argv[]) {
 		dct(gray, dct_cv);
         auto end = chrono::high_resolution_clock::now();
         auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
-        std::cout << "OpenCv DCT: " << duration.count()/1000.0 << "ms" << std::endl;
+        cout << "OpenCv DCT: " << duration.count()/1000.0 << "ms" << endl;
 #ifndef __arm__
 		imshow("DCT", dct_cv);
 #else
 		dct_cv.convertTo(dct_cv, CV_8UC1, 255.0);
-		bool wrote = imwrite("opencv_dct.tif", dct_cv);
+		bool wrote = imwrite("images/opencv_dct.tif", dct_cv);
 		if (wrote){
 			cout << "Wrote opencv_dct.tif" << endl;
 		}
@@ -64,12 +64,12 @@ int main(int argc, const char * argv[]) {
 		dct_lab = lab_dct_naive(gray);
         auto end = chrono::high_resolution_clock::now();
         auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
-        std::cout << "LabNaive DCT: " << duration.count()/1000.0 << " ms" << std::endl;
+        cout << "LabNaive DCT: " << duration.count()/1000.0 << " ms" << endl;
 #ifndef __arm__
 		imshow("DCT Lab Naive", dct_lab);
 #else
 		dct_lab.convertTo(dct_lab, CV_8UC1, 255.0);
-		bool wrote = imwrite("dct_lab_naive.tif", dct_lab);
+		bool wrote = imwrite("images/dct_lab_naive.tif", dct_lab);
 		if (wrote){
 			cout << "Wrote dct_lab_naive.tif" << endl;
 		}
@@ -83,12 +83,12 @@ int main(int argc, const char * argv[]) {
 		dct_lab_opt = lab_dct_opt(gray);
         auto end = chrono::high_resolution_clock::now();
         auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
-        std::cout << "LabOptimized DCT: " << duration.count()/1000.0 << " ms" << std::endl;
+        cout << "LabOptimized DCT: " << duration.count()/1000.0 << " ms" << endl;
 #ifndef __arm__
 		imshow("DCT Lab Opt", dct_lab_opt);
 #else
 		dct_lab_opt.convertTo(dct_lab_opt, CV_8UC1, 255.0);
-		bool wrote = imwrite("dct_lab_opt.tif", dct_lab_opt);
+		bool wrote = imwrite("images/dct_lab_opt.tif", dct_lab_opt);
 		if (wrote){
 			cout << "Wrote dct_lab_opt.tif" << endl;
 		}
@@ -103,6 +103,4 @@ int main(int argc, const char * argv[]) {
 	//Wait for a key enter
 	waitKey(0);
 #endif
-
-	return 0;
 }

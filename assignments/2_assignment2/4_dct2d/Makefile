@@ -2,7 +2,7 @@ CXX?=g++
 CXXFLAGS=-O1
 
 BUILD_DIR := build/
-BIN := dct2d 
+BIN := bin/dct2d 
 CXXSRCS := $(wildcard src/*.cxx)
 
 OBJS := $(CXXSRCS:src/%.cxx=$(BUILD_DIR)%.o)
