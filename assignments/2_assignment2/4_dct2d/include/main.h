@@ -28,7 +28,7 @@
 //#define HEIGHT  64
 
 /* student DCT */
-cv::Mat student_dct(cv::Mat input);
+cv::Mat student_dct(cv::Mat input, int mode);
 void initDCT(int WIDTH, int HEIGHT);
 
 #endif /* main_h */

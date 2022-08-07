@@ -7,7 +7,7 @@ CXXSRCS := $(wildcard src/*.cxx)
 
 OBJS := $(CXXSRCS:src/%.cxx=$(BUILD_DIR)%.o)
 
-CXXFLAGS += -Iinclude -I/usr/include/opencv4/
+CXXFLAGS += -Iinclude -I/usr/include/opencv4/ -g
 
 LDFLAGS += -llapack -lblas -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs -lopencv_videoio
 .PHONY: all
