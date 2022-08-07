@@ -14,7 +14,7 @@ float sf(int in){
 }
 
 Mat genDCTMat(int N){
-    Mat out = Mat(N,N,CV_32F);
+    Mat out = Mat(N,N,CV_32FC1);
     for(int r=0; r<N; r++){
         for(int c=0; c<N; c++){
             if(r==0){
@@ -36,44 +36,40 @@ void initDCT(int WIDTH, int HEIGHT){
 }
 
 Mat student_dct_lut(Mat input){
-    std::cout << "Naive LUT Mult\n";
 	const int HEIGHT = input.rows;
 	const int WIDTH  = input.cols;
+	float scale = 2./sqrt(HEIGHT*WIDTH);
 	Mat result = Mat(HEIGHT, WIDTH, CV_32FC1);
 	float* result_ptr = result.ptr<float>();
 	float* input_ptr  = input.ptr<float>();
-    float* LUT_h_ptr = LUT_h.ptr<float>();
-    float* LUT_w_ptr = LUT_w.ptr<float>();
 	for(int x = 0; x < HEIGHT; x++){
 		for(int y = 0; y < WIDTH; y++){
 			float value = 0.f;
 			for(int i = 0; i < HEIGHT; i++){
 				for(int j = 0; j < WIDTH; j++){
 					value += input_ptr[i * WIDTH + j]
-                        * LUT_h_ptr[i * HEIGHT + j]
-                        * LUT_w_ptr[i * WIDTH + j];
-//						* cos(M_PI/((float)HEIGHT)*(i+1./2.)*(float)x)
-//						* cos(M_PI/((float)WIDTH)*(j+1./2.)*(float)y);
+                        * LUT_h.at<float>(x,i)
+                        * LUT_w.at<float>(y,j);
+						// TODO
+						// --- Replace cos calculation by LUT ---
 				}
 			}
+//			value = scale * sf(x) * sf(y) * value;
 			result_ptr[x * WIDTH + y] = value;
 		}
 	}
 	return result;
 }
 
-cv::Mat lab_dct_opt(cv::Mat input){
+Mat lab_dct_opt(cv::Mat input){
     std::cout << "Seperable Algorithm\n";
 	const int HEIGHT = input.rows;
 	const int WIDTH = input.cols;
 	float scale = 2./sqrt(HEIGHT*WIDTH);
-	// Create the result matrix of the correct datatype
 	cv::Mat result = cv::Mat(HEIGHT, WIDTH, CV_32FC1);
 	cv::Mat result_row = cv::Mat(HEIGHT, WIDTH, CV_32FC1);
 	float* result_ptr = result.ptr<float>();
 	float* input_ptr = input.ptr<float>();
-	// Less naive implementation.
-	// Perform 2 1D DCTs, one for the rows and one for the columns
 	float value;
 	for(int k=0; k<HEIGHT; k++) {
 		for(int i=0; i<WIDTH; i++) {
@@ -84,7 +80,6 @@ cv::Mat lab_dct_opt(cv::Mat input){
 			result_row.at<float>(k,i) = value * sf(i);
 		}
 	}
-	// Now perform the column transformation
 	for(int k=0; k<WIDTH; k++) {
 		for(int i=0; i<HEIGHT; i++) {
 			value = 0.0;
@@ -103,20 +98,13 @@ Mat student_dct_mm(Mat input){
     return LUT_w*input*LUT_w.t();
 }
 
-Mat getBlock(Mat in, int x, int y){
-    std::cout << "region: " << 8*x << ", " << 8*y;
-    Rect region(8*x, 8*y, 8, 8);
-    return in(region);
-}
-
 Mat blockMatMult(int rows, int cols, Mat mat1, Mat mat2)
 { 
-    std::cout << rows << ", " << cols << '\n';
     Mat matOut = Mat(mat1.rows, mat1.cols, CV_32FC1);
     Mat result = Mat(8, 8, CV_32FC1);
     matOut = 0.0; result =0.0;
     int r=0; int c=0;
-    Rect region, region2, region3;;
+    Rect region, region2, region3;
     for(int e=0; e<rows*cols; e++){
         if(e%rows==0 && e!=0){
             r+=1;
@@ -124,24 +112,14 @@ Mat blockMatMult(int rows, int cols, Mat mat1, Mat mat2)
         }
         region = Rect(c*8,r*8,8,8);
         result = 0.0;
-//        std::cout << "--------------------------\n";
         for(int i=0; i< rows; i++){
             region2 = Rect(8*i,8*r,8,8);
             region3 = Rect(8*c,8*i,8,8);
-//            std::cout << region2;
-//            std::cout << region3;
-            //std::cout << mat1(region2);
-            //std::cout << mat2(region3);
-//            std::cout << '\n';
             result += mat1(region2)*mat2(region3);
-//            result += r+c;
-//            matOut(region) += mat1(region2) * mat2(region3);
         }
-//        std::cout << "--------------------------\n";
         result.copyTo(matOut(region));
         c+=1;
     }
-//    std::cout << matOut<<'\n';
     return matOut;
 }
 
@@ -152,7 +130,8 @@ Mat student_dct_bmm(Mat input){
     int x = input.cols / 8;
     int y = input.rows / 8;
     Mat A = blockMatMult(x, y, LUT_w, input);
-    return blockMatMult(x, y, LUT_w.t(), A);
+    Mat B = blockMatMult(x, y, A, LUT_w.t());
+    return B; 
 }
 
 Mat student_dct(Mat input, int mode){
