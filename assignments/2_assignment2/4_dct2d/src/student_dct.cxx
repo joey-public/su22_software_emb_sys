@@ -15,6 +15,7 @@ float sf(int in){
 
 Mat genDCTMat(int N){
     Mat out = Mat(N,N,CV_32FC1);
+    float* optr = out.ptr<float>();
     for(int r=0; r<N; r++){
         for(int c=0; c<N; c++){
             if(r==0){
@@ -26,7 +27,6 @@ Mat genDCTMat(int N){
         }
     }
     return out*(sqrt(2.0f/N));
-    
 }
 
 // Initialize LUT
@@ -86,7 +86,7 @@ Mat lab_dct_opt(cv::Mat input){
 			for (int j=0; j<HEIGHT; j++) {
 				value += result_row.at<float>(j,k) * cos(M_PI/((float)HEIGHT)*(j+1./2.)*(float)i);
 			}
-			result.at<float>(i, k) = value*sf(k)*scale;
+			result.at<float>(i, k) = value*sf(i)*scale;
 		}
 	}
 	return result;
@@ -147,15 +147,11 @@ Mat student_dct(Mat input, int mode){
     else if(mode==3){
         return student_dct_bmm(input); 
     }
-    else if(mode==4){
-        return input;
     }
     else{
         std::cout << "invalid mode\n";
-        return input;
+        return student_dct_bmm(input); 
     }
-    assert(input.rows==input.cols);
-    return LUT_w*input*LUT_w.t();
 }
 
 /*
