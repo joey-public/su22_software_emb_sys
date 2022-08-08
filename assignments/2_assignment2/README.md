@@ -22,6 +22,7 @@ For this part of the assignment I first installed the Eigen C++ library. I used 
 **Note arg should be `0` for naive DCT and `1` for separable DCT.**
 ### Description
 In Part 2 of the assignment I compared the performance of a naive Discrete Cosine Transform(DCT) algorithm to a more optimized DCT using a separable algorithm. The DCT algorithms are in the `lab_dct.cxx` file. The main function is in `main.cxx`. The main function takes `image.tif` as a input, runs both DCT algorithms and compares the time it takes to run each algoImages.ipynb)
+1. ![Images](2_dct/displayImages.ipynb)
 2. Results from running with `time`
 ```
 ```
