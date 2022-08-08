@@ -25,6 +25,7 @@ In Part 2 of the assignment I compared the performance of a naive Discrete Cosin
 ### Deliverables
 1. Images
     *Original  
+    ![image.tif](report_images/image.tif)
     *Resized Greyscale  
     *OpenCV DCT  
     *Naive DCT  
@@ -58,7 +59,7 @@ For the 3rd part of the assignment I implemented a naive matrix multiplication a
 ```
 **Note `width` and `height` specify the size to rescale the image to. For the code to work as expected `width` and `height` should be the same value and be divisible by 8. Passing no args will default to 64x64. Passing just the `width` will make `height=width`.**
 ### Description
-Part 4 of the assignment used many building blocks from the first 3 parts of the lab to implement 4 different 2d DCT algorithms and compare their performance. The 4 algorithms that were implemented were a Naive 4 nested loop DCT, a 2D separable DCT, Matrix Multiplication DCT, and a clock Matrix Multiply DCT. A DCT coefficient matrix was created and all four algorithms use the matrix in their implementation. The Matrix Multiplication and Block Matrix Multiplication use the DCT matrix directly to get the DCT result. The naive and separable algorithms use the DCT matrix as a lookup table to reduce the loop calculations by replacing them with a coefficient lookup. All of the DCT algorithms are implemented in the `4_dct2d/src/student_dct.cxx` file. The main function is in the `main.cxx` file and it starts by asking the user which algorithm to use and then runs the DCT using the OpenCV built in function and Custom implementation. The results from the selected custom DCT is compared to the results from the OpenCV DCT and the RMSE is reported. This process repeats on individual frames of the `inpit.raw` file.
+Part 4 of the assignment used many building blocks from the first 3 parts of the lab to implement 4 different 2d DCT algorithms and compare their performance. The 4 algorithms that were implemented were a Naive 4 nested loop DCT, a 2D separable DCT, Matrix Multiplication DCT, and a clock Matrix Multiply DCT. A DCT coefficient matrix was created and all four algorithms use the matrix in their implementation. The Matrix Multiplication and Block Matrix Multiplication use the DCT matrix directly to get the DCT result. The naive and separable algorithms use the DCT matrix as a lookup table to reduce the loop calculations by replacing them with a coefficient lookup. All of the DCT algorithms are implemented in the `student_dct.cxx` file. The main function is in the `main.cxx` file and it starts by asking the user which algorithm to use and then runs the DCT using the OpenCV built in function and Custom implementation. The results from the selected custom DCT is compared to the results from the OpenCV DCT and the RMSE is reported. This process repeats on individual frames of the `inpit.raw` file.
 ### Deliverables
 1. Performance Results 64x64
 2. Performance Results 128x128
