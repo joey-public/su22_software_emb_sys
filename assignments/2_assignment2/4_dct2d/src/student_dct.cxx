@@ -36,6 +36,7 @@ void initDCT(int WIDTH, int HEIGHT){
 }
 
 Mat student_dct_lut(Mat input){
+    std::cout << "Naive Algorithm\n";
 	const int HEIGHT = input.rows;
 	const int WIDTH  = input.cols;
 	float scale = 2./sqrt(HEIGHT*WIDTH);
@@ -54,7 +55,6 @@ Mat student_dct_lut(Mat input){
 						// --- Replace cos calculation by LUT ---
 				}
 			}
-//			value = scale * sf(x) * sf(y) * value;
 			result_ptr[x * WIDTH + y] = value;
 		}
 	}
