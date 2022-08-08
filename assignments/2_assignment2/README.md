@@ -4,6 +4,7 @@
 ### Compile and Run Instructions
 ```
     cd 1_lab_pynq_basics
+    mkdir bin/ build/
     make
     bin/vectest
 ```
@@ -16,6 +17,7 @@ For this part of the assignment I first installed the Eigen C++ library. I used 
 ### Compile and Run Instructions
 ```
     cd 2_dct 
+    mkdir bin/ build/
     make
     bin/dcttest arg
 ```
@@ -55,6 +57,7 @@ In Part 2 of the assignment I compared the performance of a naive Discrete Cosin
 ```
     insmod kernal_module/CPUcntr.ko
     cd 3_matMult
+    mkdir bin/ build/
     make
     bin/matMultTest
 ```
@@ -91,6 +94,7 @@ For the 3rd part of the assignment I implemented a naive matrix multiplication a
 ### Compile and Run Instructions
 ```
     cd 4_dct2d
+    mkdir bin/ build/
     make
     bin/dct2d mode width height
 ```
@@ -99,6 +103,7 @@ For the 3rd part of the assignment I implemented a naive matrix multiplication a
 There are also 4 shell scripts that can be run to test the results reported in the deliverables.
 ```
     cd 4_dct2d
+    mkdir bin/ build/
     make
     source shell_scripts/batch_run64x64.sh
 ```
@@ -108,6 +113,7 @@ Part 4 of the assignment used many building blocks from the first 3 parts of the
 ### Deliverables
 1. Performance Results 64x64
     ```
+        Batch Run for 64x64
         -------
         Naive Algorithm
         Execute time: 0.211518
