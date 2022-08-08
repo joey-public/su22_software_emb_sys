@@ -33,7 +33,7 @@
 **/bin
 
 # Images
-*.tif
+**/images
 #Notebooks
 *.ipynb
 
