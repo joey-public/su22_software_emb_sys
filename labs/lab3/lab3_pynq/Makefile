@@ -1,7 +1,25 @@
 CXX?=g++
-CXXFLAGS=-O0 -std=c++11 -mfpu=neon -pg
 
-EXEC=lab3_fir
+#o0
+#CXXFLAGS=-O0 -std=c++11 -mfpu=neon -pg
+#EXEC= builds/o0/lab3_fir_o0
+
+#o1
+#CXXFLAGS=-O1 -std=c++11 -mfpu=neon -pg
+#EXEC=builds/o1/lab3_fir_o1
+
+#o2
+#CXXFLAGS=-O2 -std=c++11 -mfpu=neon -pg
+#EXEC=builds/o2/lab3_fir_o2
+
+#o3
+#CXXFLAGS=-O3 -std=c++11 -mfpu=neon -pg
+#EXEC=builds/o3/lab3_fir_o3
+
+#ofast
+CXXFLAGS=-Ofast -std=c++11 -mfpu=neon -pg
+EXEC=builds/ofast/lab3_fir_ofast
+
 
 INCLUDEDIR=include
 SRCDIR=src
