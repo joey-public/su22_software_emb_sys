@@ -1,5 +1,5 @@
 CXX?=g++
-CXXFLAGS=-O1
+CXXFLAGS=-O1 -g 
 
 EXEC=CODEC
 
