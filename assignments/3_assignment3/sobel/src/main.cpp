@@ -27,9 +27,7 @@ void usage()
 
 int main(int argc, const char * argv[])
 {
-
     int mode = 0;
-
     if (argc < 2){
         usage();
         return 0;
@@ -38,7 +36,6 @@ int main(int argc, const char * argv[])
     }
 
 	cout << "WES237B hw3\n";
-
 	VideoCapture cap("input.raw");
 
 	int WIDTH  = 384;
@@ -82,11 +79,11 @@ int main(int argc, const char * argv[])
         add(s_x_abs , s_y_abs, mag_squared);
         sqrt(mag_squared, cv_sobel_out);
         cv_sobel_out.convertTo(cv_sobel_out, CV_8U);
+        cout << cv_sobel_out;
         imwrite("./image_outputs/sobel_opencv.tif", cv_sobel_out);
 
         Mat sobel_out;
         sobel_out = Mat::zeros(gray.size(), CV_8U);
-        cout << sobel_out.size() << '\n';
 
         char descr[128];
         printf("Mode = %d\n",mode);
@@ -94,7 +91,6 @@ int main(int argc, const char * argv[])
         if (mode == NAIVE){
             sobel(gray, sobel_out);
             sprintf(descr, "sobel_naive");
-            std::cout << cv_sobel_out << std::endl;
         }
 		
         else if (mode == UNROLLED){
