@@ -79,7 +79,7 @@ int main(int argc, const char * argv[])
         add(s_x_abs , s_y_abs, mag_squared);
         sqrt(mag_squared, cv_sobel_out);
         cv_sobel_out.convertTo(cv_sobel_out, CV_8U);
-        cout << cv_sobel_out;
+        //cout << cv_sobel_out;
         imwrite("./image_outputs/sobel_opencv.tif", cv_sobel_out);
 
         Mat sobel_out;
