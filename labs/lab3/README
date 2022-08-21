@@ -1,0 +1,19 @@
+# Lab 3 
+
+## 1. Gprof Comparison For FIR Filter Jetson
+| Opt Level| Pynq n  | Pynq o  | Pynq s  | Jetson n  | Jetson o  | Jetson s  |
+| -------- | ------- | ------- | ------- | --------- | --------- | --------- |
+| O0       | 0.00 ms | 0.00 ms | 0.00 ms | 0.05 ms   | 0.02 ms   | 0.04 ms   |
+| O1       | 0.00 ms | 0.00 ms | 0.00 ms | 0.02 ms   | 0.00 ms   | 0.01 ms   |
+| O2       | 0.00 ms | 0.00 ms | 0.00 ms | 0.02 ms   | 0.00 ms   | 0.01 ms   |
+| O3       | 0.00 ms | 0.00 ms | 0.00 ms | 0.01 ms   | 0.01 ms   | 0.00 ms   |
+| Ofast    | 0.00 ms | 0.00 ms | 0.00 ms | 0.01 ms   | 0.01 ms   | 0.00 ms   |
+
+## 2. Time Comparison For FIR Filter on PYNQ vs Jetson (o0)
+| Time     | Pynq    | Pynq pg | Jetson    | Jetson pg |
+| -------- | ------- | ------- | --------- | --------- |
+| real     | 0.00  s | 0.00  s | 0.266 s   | 0.263 s   |
+| usr      | 0.00  s | 0.00  s | 0.252 s   | 0.252 s   |
+| sys      | 0.00  s | 0.00  s | 0.120 s   | 0.008 s   |
+
+## 3. Platform Comparison 

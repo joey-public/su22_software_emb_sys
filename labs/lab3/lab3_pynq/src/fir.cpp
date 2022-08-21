@@ -35,28 +35,6 @@ void fir_opt(float *coeffs, float *input, float *output, int length, int filterL
     }
 }
 
-/*JOEY
-// ----------------------------------------------
-// Run a FIR filter on the given input data using NEON
-// ----------------------------------------------
-void fir_neon(float *coeffs, float *input, float *output, int length, int filterLength)
-// ----------------------------------------------
-{
-    float32x4_t in;
-    float32x4_t co;
-    float32x4_t ac;
-    for(int i=0; i<length-filterLength; i++){
-        ac = vmovq_n_f32(0);
-        for(int j=0; j<filterLength; j+=4){
-            in = vld1q_f32(&input[i+j]); 
-            co = vld1q_f32(&coeffs[j]); 
-            ac = vaddq_f32(ac, vmulq_f32(in,co));
-        }
-    output[i] = ac[0] + ac[1] + ac[2] + ac[3];
-    }
-}
-*/
-
 // ----------------------------------------------
 // Run a FIR filter on the given input data using NEON
 // ----------------------------------------------
