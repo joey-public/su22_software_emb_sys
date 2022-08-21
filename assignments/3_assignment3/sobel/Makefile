@@ -1,5 +1,6 @@
 CXX?=g++
-CXXFLAGS=-O1 -ftree-vectorize -std=c++11 -mfpu=neon
+CXXFLAGS=-O1 -ftree-vectorize -std=c++11 -mfpu=neon -pg
+#CXXFLAGS=-O2 -std=c++11 -mfpu=neon -pg
 
 EXEC=hw3
 

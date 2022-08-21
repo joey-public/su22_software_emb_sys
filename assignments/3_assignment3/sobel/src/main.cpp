@@ -69,7 +69,7 @@ int main(int argc, const char * argv[])
 		resize(gray, gray, Size(WIDTH, HEIGHT));
         imwrite("./image_outputs/image_gray.tif", gray);
 
-        //OpenCV sobel filter
+/*        //OpenCV sobel filter
         Mat s_x, s_y, cv_sobel_out;
         Mat s_x_abs, s_y_abs, mag_squared;
         Sobel(gray, s_x, CV_32F, 1, 0, 3, 1, 0, BORDER_ISOLATED);
@@ -81,14 +81,18 @@ int main(int argc, const char * argv[])
         cv_sobel_out.convertTo(cv_sobel_out, CV_8U);
         //cout << cv_sobel_out;
         imwrite("./image_outputs/sobel_opencv.tif", cv_sobel_out);
-
+*/
         Mat sobel_out;
         sobel_out = Mat::zeros(gray.size(), CV_8U);
 
         char descr[128];
         printf("Mode = %d\n",mode);
 		// Apply filter
-        if (mode == NAIVE){
+        if (mode == 0){
+            sobel_opencv(gray, sobel_out);
+            sprintf(descr, "sobel_opencv");
+        }
+        else if (mode == NAIVE){
             sobel(gray, sobel_out);
             sprintf(descr, "sobel_naive");
         }
@@ -97,7 +101,6 @@ int main(int argc, const char * argv[])
             sobel_unroll(gray, sobel_out);
             sprintf(descr, "sobel_unrolled");
         }	
-
         else if (mode == NEON){
            sobel_neon(gray, sobel_out);
            sprintf(descr, "sobel_neon");
