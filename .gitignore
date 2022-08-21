@@ -37,4 +37,5 @@
 **/images
 #Notebooks
 *.ipynb
-
+# Videos 
+*.raw
