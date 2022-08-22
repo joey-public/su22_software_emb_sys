@@ -2,13 +2,14 @@
 
 ## FIR Filter 
 ###  1. Gprof Comparison For FIR Filter Jetson
-| Opt Level| Pynq n  | Pynq o  | Pynq s  | Jetson n  | Jetson o  | Jetson s  |
-| -------- | ------- | ------- | ------- | --------- | --------- | --------- |
-| O0       | 0.00 ms | 0.00 ms | 0.00 ms | 0.05 ms   | 0.02 ms   | 0.04 ms   |
-| O1       | 0.00 ms | 0.00 ms | 0.00 ms | 0.02 ms   | 0.00 ms   | 0.01 ms   |
-| O2       | 0.00 ms | 0.00 ms | 0.00 ms | 0.02 ms   | 0.00 ms   | 0.01 ms   |
-| O3       | 0.00 ms | 0.00 ms | 0.00 ms | 0.01 ms   | 0.01 ms   | 0.00 ms   |
-| Ofast    | 0.00 ms | 0.00 ms | 0.00 ms | 0.01 ms   | 0.01 ms   | 0.00 ms   |
+The FIR filter was running so fast that gprof started showing 0.00 for the loop unrolled at just the O1 oprimization. Still In general the speed increased as the optimization flags increased. 
+| Opt Level| Jet-Naive | Jet-Opt   | Jet-Neon  |
+| -------- | --------- | --------- | --------- |
+| O0       | 0.05 ms   | 0.02 ms   | 0.04 ms   |
+| O1       | 0.02 ms   | 0.00 ms   | 0.01 ms   |
+| O2       | 0.02 ms   | 0.00 ms   | 0.01 ms   |
+| O3       | 0.01 ms   | 0.01 ms   | 0.00 ms   |
+| Ofast    | 0.01 ms   | 0.01 ms   | 0.00 ms   |
 
 ## 2 & 3. Time Comparison For FIR Filter on PYNQ vs Jetson (o0)
 | Time     | Pynq    | Pynq pg | Jetson    | Jetson pg |
