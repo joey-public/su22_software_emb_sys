@@ -46,7 +46,7 @@ Each sample counts as 0.01 seconds.
   0.00      0.32     0.00        1     0.00     0.00  cv::MatExpr::~MatExpr()
 ```
 ## Extra Credit: Valgrind Cache Analysis 
-The extra toolprofiling tool I decided to test was `valgrind`. SPecifically i was using the `cachegrind` tool to analyze the cache misses for the differtn sobel algorithms. To use cachegrind I simply comiled with debug `-g` and then ran the `valgrind --tool=cachegrind ./hw3 #`. Then I ran this for my Naive, loop unrolled and neon sobel filters. THe cack performance summaries for each are shown below. 
+The extra toolprofiling tool I decided to test was `valgrind`. SPecifically i was using the `cachegrind` tool to analyze the cache misses for the differtn sobel algorithms. To use cachegrind I simply comiled with debug `-g` and then ran the `valgrind --tool=cachegrind ./hw3 #`. Then I ran this for my Naive, loop unrolled and neon sobel filters. THe cack performance summaries for each are shown below. From https://valgrind.org/docs/manual/cg-manual.html you can see that I1 misses estimate instuction cache misses, D1 simulate data chache misses and LL simulates a Last Level Cache. The cache simualtion results show that the naive implementation had by far the smallest I1 chache miss rate, which is probably why it was the fastest to execute of the three. WHats interesting was that the neon implementation had more I1 misses than the loop unroll, but stil executed faster. 
 ### Naive Cache Performance
 ```
 ==2027== Process terminating with default action of signal 27 (SIGPROF)
