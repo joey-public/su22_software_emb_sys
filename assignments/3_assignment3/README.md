@@ -43,7 +43,85 @@ Each sample counts as 0.01 seconds.
   0.00      0.32     0.00        1     0.00   320.00  profile(cv::Mat)
   0.00      0.32     0.00        1     0.00     0.00  cv::MatExpr::~MatExpr()
 ```
-## Extra Credit: Gcov Profiling
+## Extra Credit: Valgrind Cache Analysis 
+The extra toolprofiling tool I decided to test was `valgrind`. SPecifically i was using the `cachegrind` tool to analyze the cache misses for the differtn sobel algorithms. To use cachegrind I simply comiled with debug `-g` and then ran the `valgrind --tool=cachegrind ./hw3 #`. Then I ran this for my Naive, loop unrolled and neon sobel filters. THe cack performance summaries for each are shown below. 
+### Naive Cache Performance
+```
+==2027== Process terminating with default action of signal 27 (SIGPROF)
+==2027==    at 0x50145A2: syscall (syscall.S:38)
+==2027==    by 0x81ED589: ??? (in /usr/lib/arm-linux-gnueabihf/libtbb.so.2)
+==2027==    by 0x81ED5D5: ??? (in /usr/lib/arm-linux-gnueabihf/libtbb.so.2)
+==2027==    by 0x59199D1: start_thread (pthread_create.c:477)
+==2027==    by 0x5016C5B: ??? (clone.S:73)
+==2027==
+==2027== I   refs:      895,830,047
+==2027== I1  misses:        337,619
+==2027== LLi misses:         27,169
+==2027== I1  miss rate:        0.04%
+==2027== LLi miss rate:        0.00%
+==2027==
+==2027== D   refs:      434,890,858  (301,991,363 rd   + 132,899,495 wr)
+==2027== D1  misses:     16,914,213  ( 16,282,498 rd   +     631,715 wr)
+==2027== LLd misses:      3,198,501  (  2,843,615 rd   +     354,886 wr)
+==2027== D1  miss rate:         3.9% (        5.4%     +         0.5%  )
+==2027== LLd miss rate:         0.7% (        0.9%     +         0.3%  )
+==2027==
+==2027== LL refs:        17,251,832  ( 16,620,117 rd   +     631,715 wr)
+==2027== LL misses:       3,225,670  (  2,870,784 rd   +     354,886 wr)
+==2027== LL miss rate:          0.2% (        0.2%     +         0.3%  )
+```
+### Loop Unroll Cache Performance
+```
+==2075==
+==2075== Process terminating with default action of signal 27 (SIGPROF)
+==2075==    at 0x50145A2: syscall (syscall.S:38)
+==2075==    by 0x81ED589: ??? (in /usr/lib/arm-linux-gnueabihf/libtbb.so.2)
+==2075==    by 0x81ED5D5: ??? (in /usr/lib/arm-linux-gnueabihf/libtbb.so.2)
+==2075==    by 0x59199D1: start_thread (pthread_create.c:477)
+==2075==    by 0x5016C5B: ??? (clone.S:73)
+==2075==
+==2075== I   refs:      1,222,711,226
+==2075== I1  misses:        9,826,516
+==2075== LLi misses:           28,012
+==2075== I1  miss rate:          0.80%
+==2075== LLi miss rate:          0.00%
+==2075==
+==2075== D   refs:        642,063,514  (429,729,399 rd   + 212,334,115 wr)
+==2075== D1  misses:       21,184,728  ( 20,331,512 rd   +     853,216 wr)
+==2075== LLd misses:        3,197,420  (  2,843,113 rd   +     354,307 wr)
+==2075== D1  miss rate:           3.3% (        4.7%     +         0.4%  )
+==2075== LLd miss rate:           0.5% (        0.7%     +         0.2%  )
+==2075==
+==2075== LL refs:          31,011,244  ( 30,158,028 rd   +     853,216 wr)
+==2075== LL misses:         3,225,432  (  2,871,125 rd   +     354,307 wr)
+==2075== LL miss rate:            0.2% (        0.2%     +         0.2%  )
+```
+### Neon Cache Performance
+```
+==2100==
+==2100== Process terminating with default action of signal 27 (SIGPROF)
+==2100==    at 0x50145A2: syscall (syscall.S:38)
+==2100==    by 0x81ED589: ??? (in /usr/lib/arm-linux-gnueabihf/libtbb.so.2)
+==2100==    by 0x81ED5D5: ??? (in /usr/lib/arm-linux-gnueabihf/libtbb.so.2)
+==2100==    by 0x59199D1: start_thread (pthread_create.c:477)
+==2100==    by 0x5016C5B: ??? (clone.S:73)
+==2100==
+==2100== I   refs:      1,420,555,177
+==2100== I1  misses:       14,348,981
+==2100== LLi misses:           27,971
+==2100== I1  miss rate:          1.01%
+==2100== LLi miss rate:          0.00%
+==2100==
+==2100== D   refs:        785,885,798  (515,285,551 rd   + 270,600,247 wr)
+==2100== D1  misses:       22,945,313  ( 21,756,466 rd   +   1,188,847 wr)
+==2100== LLd misses:        3,196,819  (  2,842,578 rd   +     354,241 wr)
+==2100== D1  miss rate:           2.9% (        4.2%     +         0.4%  )
+==2100== LLd miss rate:           0.4% (        0.6%     +         0.1%  )
+==2100==
+==2100== LL refs:          37,294,294  ( 36,105,447 rd   +   1,188,847 wr)
+==2100== LL misses:         3,224,790  (  2,870,549 rd   +     354,241 wr)
+==2100== LL miss rate:            0.1% (        0.1%     +         0.1%  )
+```
 
 ## CUDA Intro
 1. What does the global flag mean?

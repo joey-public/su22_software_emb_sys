@@ -1,5 +1,5 @@
 CXX?=g++
-CXXFLAGS=-O1 -ftree-vectorize -std=c++11 -mfpu=neon -pg --coverage
+CXXFLAGS= -o -O1 -ftree-vectorize -std=c++11 -mfpu=neon -pg --coverage
 #CXXFLAGS=-O2 -std=c++11 -mfpu=neon -pg
 
 EXEC=hw3
