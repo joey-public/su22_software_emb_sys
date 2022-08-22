@@ -9,6 +9,7 @@
 | O2       | 0.02 ms   | 0.00 ms   | 0.01 ms   |
 | O3       | 0.01 ms   | 0.01 ms   | 0.00 ms   |
 | Ofast    | 0.01 ms   | 0.01 ms   | 0.00 ms   |
+
 The FIR filter was running so fast that gprof started showing 0.00 for the loop unrolled at just the O1 oprimization. Still In general the speed increased as the optimization flags increased. 
 
 ## 2-3. Time Comparison For FIR Filter on PYNQ vs Jetson (o0)
@@ -17,6 +18,7 @@ The FIR filter was running so fast that gprof started showing 0.00 for the loop 
 | real     | 1.732 s | 1.729 s | 0.266 s   | 0.263 s   |
 | usr      | 1.690 s | 1.708 s | 0.252 s   | 0.252 s   |
 | sys      | 0.040 s | 0.020 s | 0.120 s   | 0.008 s   |
+
 This test was run using the `-O0` optimization and using the `time` bash program to time the program execution. Compiling with and without the -pq flag made a slight difference in the execution time, but not a significant one. What made a bigger differnce was which cpu the program was run on. As seen in the above table the processor on the PYNQ board is quite a bit slower than the one on the Jetson TX2. 
 
 # Assingment 3
