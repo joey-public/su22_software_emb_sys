@@ -11,7 +11,7 @@ The FIR filter was running so fast that gprof started showing 0.00 for the loop 
 | O3       | 0.01 ms   | 0.01 ms   | 0.00 ms   |
 | Ofast    | 0.01 ms   | 0.01 ms   | 0.00 ms   |
 
-## 2 & 3. Time Comparison For FIR Filter on PYNQ vs Jetson (o0)
+## 2-3. Time Comparison For FIR Filter on PYNQ vs Jetson (o0)
 | Time     | Pynq    | Pynq pg | Jetson    | Jetson pg |
 | -------- | ------- | ------- | --------- | --------- |
 | real     | 1.732 s | 1.729 s | 0.266 s   | 0.263 s   |
