@@ -13,7 +13,7 @@
 
 #define BLUR_SIZE 5
 
-//#define UNIFIED_MEM 
+#define UNIFIED_MEM 
 
 using namespace std;
 using namespace cv;
@@ -89,12 +89,18 @@ int main(int argc, const char *argv[])
 #ifndef UNIFIED_MEM
     //TODO: Allocate memory on the GPU device.
     //TODO: Declare the host image result matrices
-#else
-    //TODO: Allocate unified memory for the necessary matrices
-    //TODO: Declare the image matrices which point to the unified memory
-#endif
+    printf("\nSeperate Memory\n");
 	Mat rgb = Mat(HEIGHT, WIDTH, CV_8UC3);
 	Mat gray = Mat(HEIGHT, WIDTH, CV_8U);
+#else
+    printf("\nUnified Memory\n");
+    uint size_img = WIDTH*HEIGHT*sizeof(unsigned char);
+    unsigned char *rgb_device, *gray_device;
+    cudaMallocManaged(&gray_device, size_img);
+    cudaMallocManaged(&rgb_device, size_img*CHANNELS);
+    Mat gray = Mat(HEIGHT, WIDTH, CV_8U, gray_device);
+    Mat rgb = Mat(HEIGHT, WIDTH, CV_8UC3, rgb_device);
+#endif
 
 	//Matrix for OpenCV inversion
 	Mat ones = Mat::ones(HEIGHT, WIDTH, CV_8U)*255;
@@ -132,14 +138,18 @@ int main(int argc, const char *argv[])
 				break;
 
 			case GPU:
+                uint size_img = WIDTH*HEIGHT*sizeof(unsigned char);
+                unsigned char *rgb_device, *gray_device;
 #ifndef UNIFIED_MEM
-                /* TODO: 1) Copy data from host to device
-                 *       2) Call GPU host function with device data
-                 *       3) Copy data from device to host
-                */
+                cudaMalloc((void**)&rgb_device, size_img*CHANNELS);
+                cudaMalloc((void**)&gray_device, size_img);
+                cudaMemcpy(rgb_device, rgb.ptr<uchar>(), size_img*CHANNELS, cudaMemcpyHostToDevice);
+                img_rgb2gray(gray_device, rgb_device, WIDTH, HEIGHT, CHANNELS);
+                cudaMemcpy(gray.ptr<uchar>(), gray_device, size_img, cudaMemcpyDeviceToHost);
+                cudaFree(rgb_device);
+                cudaFree(gray_device);
 #else
-                /* TODO: 1) Call GPU host function with unified memory allocated data
-                */
+                img_rgb2gray(gray.ptr<uchar>(), rgb.ptr<uchar>(), WIDTH, HEIGHT, CHANNELS);
 #endif
 				break;
 		}

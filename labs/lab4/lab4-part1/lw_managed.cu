@@ -27,8 +27,7 @@ int main(int argc, char* argv[]){
     uint b = 1; // dim3 b(1,1,1);
     uint t = 3; //dim3 t(3,1,1);
     myKernel<<<b,t>>>(m, v, r);
-    cudaDeviceSynchronize();
-    
+    cudaDeviceSynchronize(); 
     int scs = 1;
     for(uint i=0; i<3; i++){
         if(r[i] != 2){
