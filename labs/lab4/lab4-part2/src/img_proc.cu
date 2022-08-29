@@ -28,12 +28,16 @@ void img_rgb2gray_cpu(uchar* out, const uchar* in, const uint width, const uint 
 
 void img_invert_cpu(uchar* out, const uchar* in, const uint width, const uint height)
 {
-    //TODO: Invert a 8bit image
+    for(int i = 0; i < width*height; i++){
+        out[i] = 255-in[i];     
+    }     
+    
 }
 
 void img_blur_cpu(uchar* out, const uchar* in, const uint width, const uint height, const int blur_size)
 {
-    //TODO: Average out blur_size pixels
+    for(int i = 0; i < width*height; i++){
+    }
 }
 
 // =================== GPU Kernel Functions ===================

@@ -13,7 +13,7 @@
 
 #define BLUR_SIZE 5
 
-#define UNIFIED_MEM 
+//#define UNIFIED_MEM 
 
 using namespace std;
 using namespace cv;
@@ -92,6 +92,7 @@ int main(int argc, const char *argv[])
     printf("\nSeperate Memory\n");
 	Mat rgb = Mat(HEIGHT, WIDTH, CV_8UC3);
 	Mat gray = Mat(HEIGHT, WIDTH, CV_8U);
+    Mat invert = Mat(HEIGHT, WIDTH, CV_8U);
 #else
     printf("\nUnified Memory\n");
     uint size_img = WIDTH*HEIGHT*sizeof(unsigned char);
@@ -133,8 +134,8 @@ int main(int argc, const char *argv[])
 #endif
 				break;
 			case CPU:
-                // TODO: 1) Call the CPU functions
                 img_rgb2gray_cpu(gray.ptr(), rgb.ptr(), WIDTH, HEIGHT, CHANNELS); 
+                img_invert_cpu(invert.ptr<uchar>(), gray.ptr<uchar>(), WIDTH, HEIGHT);
 				break;
 
 			case GPU:
@@ -167,6 +168,7 @@ int main(int argc, const char *argv[])
 		}
 
 		imshow("Gray", gray);
+		imshow("Invert", invert);
 
 		key = waitKey(1);
 	}
