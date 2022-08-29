@@ -5,10 +5,12 @@
 
 #include "sobel.h"
 
+#define OPENCV 0
 #define FRAME_NUMBER 1
 #define NAIVE 1
 #define UNROLLED 2
 #define NEON 3
+#define PROFILE 5
 
 using namespace std;
 using namespace cv;
@@ -23,6 +25,17 @@ void usage()
         cout << "WIDTH: 384 default" << endl;
         cout << "HEIGHT: 384 default" << endl;
         cout << "Without HEIGHT, HEIGHT=WIDTH" << endl;
+}
+
+void profile(Mat gray){
+    Mat sobel_out = Mat::zeros(gray.size(), CV_8U);
+    sobel_opencv(gray, sobel_out); 
+    sobel_out = Mat::zeros(gray.size(), CV_8U);
+    sobel(gray, sobel_out); 
+    sobel_out = Mat::zeros(gray.size(), CV_8U);
+    sobel_unroll(gray, sobel_out); 
+    sobel_out = Mat::zeros(gray.size(), CV_8U);
+    sobel_neon(gray, sobel_out); 
 }
 
 int main(int argc, const char * argv[])
@@ -69,26 +82,27 @@ int main(int argc, const char * argv[])
 		resize(gray, gray, Size(WIDTH, HEIGHT));
         imwrite("./image_outputs/image_gray.tif", gray);
 
-/*        //OpenCV sobel filter
-        Mat s_x, s_y, cv_sobel_out;
-        Mat s_x_abs, s_y_abs, mag_squared;
-        Sobel(gray, s_x, CV_32F, 1, 0, 3, 1, 0, BORDER_ISOLATED);
-        Sobel(gray, s_y, CV_32F, 0, 1, 3, 1, 0, BORDER_ISOLATED);
-        pow(s_x, 2, s_x_abs);
-        pow(s_y, 2, s_y_abs);
-        add(s_x_abs , s_y_abs, mag_squared);
-        sqrt(mag_squared, cv_sobel_out);
-        cv_sobel_out.convertTo(cv_sobel_out, CV_8U);
-        //cout << cv_sobel_out;
-        imwrite("./image_outputs/sobel_opencv.tif", cv_sobel_out);
-*/
+        if(!(mode == PROFILE)){
+            //OpenCV sobel filter
+            Mat s_x, s_y, cv_sobel_out;
+            Mat s_x_abs, s_y_abs, mag_squared;
+            Sobel(gray, s_x, CV_32F, 1, 0, 3, 1, 0, BORDER_ISOLATED);
+            Sobel(gray, s_y, CV_32F, 0, 1, 3, 1, 0, BORDER_ISOLATED);
+            pow(s_x, 2, s_x_abs);
+            pow(s_y, 2, s_y_abs);
+            add(s_x_abs , s_y_abs, mag_squared);
+            sqrt(mag_squared, cv_sobel_out);
+            cv_sobel_out.convertTo(cv_sobel_out, CV_8U);
+            imwrite("./image_outputs/sobel_opencv.tif", cv_sobel_out);
+        }
+
         Mat sobel_out;
         sobel_out = Mat::zeros(gray.size(), CV_8U);
 
         char descr[128];
         printf("Mode = %d\n",mode);
 		// Apply filter
-        if (mode == 0){
+        if (mode == OPENCV){
             sobel_opencv(gray, sobel_out);
             sprintf(descr, "sobel_opencv");
         }
@@ -105,7 +119,9 @@ int main(int argc, const char * argv[])
            sobel_neon(gray, sobel_out);
            sprintf(descr, "sobel_neon");
         }
-
+        else if (mode == PROFILE){
+           profile(gray);
+        }
         //Write the current output
         char filename[128];
         sprintf(filename, "./image_outputs/%s.tif", descr);
