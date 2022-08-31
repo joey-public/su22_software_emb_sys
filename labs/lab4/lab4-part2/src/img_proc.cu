@@ -95,10 +95,28 @@ __global__ void kernel_img_blur(uchar* out, const uchar* in, const uint width, c
 {
     const int x = blockIdx.x * blockDim.x + threadIdx.x; 
     const int y = blockIdx.y * blockDim.y + threadIdx.y; 
-    int idx;
+    int offset = blur_size/2;
+    int i;
     if(x < width && y < height){
-        idx = y*width + x;
-        out[idx] = 255-in[idx];
+        i = y*width + x;
+        int result = 0;
+        int ac = 0;
+        int idx = (i-width*offset)-offset;
+        for(int j = 0; j<blur_size; j++){
+            for(int j =0; j<blur_size; j++){
+                if(idx < 0 || idx > width*height){
+                    ac = 0;
+                }
+                else{
+                    ac = in[idx];
+                }
+                result += ac;
+                idx+=1;
+            }
+            idx -= (blur_size-1);
+            idx += width;
+        }
+        out[i] = result / (blur_size*blur_size);
     }
 }
 
@@ -132,6 +150,6 @@ void img_blur(uchar* out, const uchar* in, const uint width, const uint height, 
     const int grid_y = 64;
     dim3 grid(grid_x, grid_y, 1);
     dim3 block(divup(width, grid_x), divup(height, grid_y), 1);
-    kernel_img_invert<<<grid,block>>>(out, in, width, height);
+    kernel_img_blur<<<grid,block>>>(out, in, width, height, blur_size);
     cudaDeviceSynchronize(); 
 }

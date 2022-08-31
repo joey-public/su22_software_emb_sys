@@ -13,7 +13,7 @@
 
 #define BLUR_SIZE 5
 
-//#define UNIFIED_MEM 
+#define UNIFIED_MEM 
 
 using namespace std;
 using namespace cv;
@@ -99,8 +99,10 @@ int main(int argc, const char *argv[])
     Mat blur = Mat(HEIGHT, WIDTH, CV_8U);
 #else
     printf("\nUnified Memory\n");
-    cudaMallocManaged(&gray_device, size_img);
     cudaMallocManaged(&rgb_device, size_img*CHANNELS);
+    cudaMallocManaged(&gray_device, size_img);
+    cudaMallocManaged(&invert_device, size_img);
+    cudaMallocManaged(&blur_device, size_img);
     Mat rgb = Mat(HEIGHT, WIDTH, CV_8UC3, rgb_device);
     Mat gray = Mat(HEIGHT, WIDTH, CV_8U, gray_device);
     Mat invert = Mat(HEIGHT, WIDTH, CV_8U, invert_device);
@@ -155,13 +157,15 @@ int main(int argc, const char *argv[])
                 img_blur(blur_device, gray_device, WIDTH, HEIGHT, BLUR_SIZE);
                 cudaMemcpy(gray.ptr<uchar>(), gray_device, size_img, cudaMemcpyDeviceToHost);
                 cudaMemcpy(invert.ptr<uchar>(), invert_device, size_img, cudaMemcpyDeviceToHost);
-                cudaMemcpy(blur.ptr<uchar>(), gray_device, size_img, cudaMemcpyDeviceToHost);
+                cudaMemcpy(blur.ptr<uchar>(), blur_device, size_img, cudaMemcpyDeviceToHost);
                 cudaFree(rgb_device);
                 cudaFree(gray_device);
                 cudaFree(invert_device);
                 cudaFree(blur_device);
 #else
                 img_rgb2gray(gray.ptr<uchar>(), rgb.ptr<uchar>(), WIDTH, HEIGHT, CHANNELS);
+                img_invert(invert_device, gray_device, WIDTH, HEIGHT);
+                img_blur(blur_device, gray_device, WIDTH, HEIGHT, BLUR_SIZE);
 #endif
 				break;
 		}
