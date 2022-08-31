@@ -36,7 +36,27 @@ void img_invert_cpu(uchar* out, const uchar* in, const uint width, const uint he
 
 void img_blur_cpu(uchar* out, const uchar* in, const uint width, const uint height, const int blur_size)
 {
+//    float scale = 1/blur_size;
+    int offset = blur_size/2;
     for(int i = 0; i < width*height; i++){
+        int result = 0;
+        int ac = 0;
+        int idx = (i-width*offset)-offset;
+        for(int j = 0; j<blur_size; j++){
+            for(int j =0; j<blur_size; j++){
+                if(idx < 0 || idx > width*height){
+                    ac = 0;
+                }
+                else{
+                    ac = in[idx];
+                }
+                result += ac;
+                idx+=1;
+            }
+            idx -= (blur_size-1);
+            idx += width;
+        }
+        out[i] = result / (blur_size*blur_size);
     }
 }
 
@@ -60,12 +80,26 @@ __global__ void kernel_img_rgb2gray(uchar* out, const uchar* in, const uint widt
     }
 }
 
-void kernel_img_invert(uchar* out, const uchar* in, const uint width, const uint height)
+__global__ void kernel_img_invert(uchar* out, const uchar* in, const uint width, const uint height)
 {
+    const int x = blockIdx.x * blockDim.x + threadIdx.x; 
+    const int y = blockIdx.y * blockDim.y + threadIdx.y; 
+    int idx;
+    if(x < width && y < height){
+        idx = y*width + x;
+        out[idx] = 255-in[idx];
+    }
 }
 
-void kernel_img_blur(uchar* out, const uchar* in, const uint width, const uint height, const int blur_size)
+__global__ void kernel_img_blur(uchar* out, const uchar* in, const uint width, const uint height, const int blur_size)
 {
+    const int x = blockIdx.x * blockDim.x + threadIdx.x; 
+    const int y = blockIdx.y * blockDim.y + threadIdx.y; 
+    int idx;
+    if(x < width && y < height){
+        idx = y*width + x;
+        out[idx] = 255-in[idx];
+    }
 }
 
 // =================== GPU Host Functions ===================
@@ -84,8 +118,20 @@ void img_rgb2gray(uchar* out, const uchar* in, const uint width, const uint heig
 
 void img_invert(uchar* out, const uchar* in, const uint width, const uint height)
 {
+    const int grid_x = 64;
+    const int grid_y = 64;
+    dim3 grid(grid_x, grid_y, 1);
+    dim3 block(divup(width, grid_x), divup(height, grid_y), 1);
+    kernel_img_invert<<<grid,block>>>(out, in, width, height);
+    cudaDeviceSynchronize(); 
 }
 
 void img_blur(uchar* out, const uchar* in, const uint width, const uint height, const int blur_size)
 {
+    const int grid_x = 64;
+    const int grid_y = 64;
+    dim3 grid(grid_x, grid_y, 1);
+    dim3 block(divup(width, grid_x), divup(height, grid_y), 1);
+    kernel_img_invert<<<grid,block>>>(out, in, width, height);
+    cudaDeviceSynchronize(); 
 }

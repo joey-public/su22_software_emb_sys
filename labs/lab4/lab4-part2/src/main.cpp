@@ -86,6 +86,9 @@ int main(int argc, const char *argv[])
 	LinuxTimer fps_counter;
 	double time_elapsed = 0;
 
+    uint size_img = WIDTH*HEIGHT*sizeof(unsigned char);
+    unsigned char *rgb_device, *gray_device, *invert_device, *blur_device;
+
 #ifndef UNIFIED_MEM
     //TODO: Allocate memory on the GPU device.
     //TODO: Declare the host image result matrices
@@ -93,14 +96,15 @@ int main(int argc, const char *argv[])
 	Mat rgb = Mat(HEIGHT, WIDTH, CV_8UC3);
 	Mat gray = Mat(HEIGHT, WIDTH, CV_8U);
     Mat invert = Mat(HEIGHT, WIDTH, CV_8U);
+    Mat blur = Mat(HEIGHT, WIDTH, CV_8U);
 #else
     printf("\nUnified Memory\n");
-    uint size_img = WIDTH*HEIGHT*sizeof(unsigned char);
-    unsigned char *rgb_device, *gray_device;
     cudaMallocManaged(&gray_device, size_img);
     cudaMallocManaged(&rgb_device, size_img*CHANNELS);
-    Mat gray = Mat(HEIGHT, WIDTH, CV_8U, gray_device);
     Mat rgb = Mat(HEIGHT, WIDTH, CV_8UC3, rgb_device);
+    Mat gray = Mat(HEIGHT, WIDTH, CV_8U, gray_device);
+    Mat invert = Mat(HEIGHT, WIDTH, CV_8U, invert_device);
+    Mat blur = Mat(HEIGHT, WIDTH, CV_8U, blur_device);
 #endif
 
 	//Matrix for OpenCV inversion
@@ -136,19 +140,26 @@ int main(int argc, const char *argv[])
 			case CPU:
                 img_rgb2gray_cpu(gray.ptr(), rgb.ptr(), WIDTH, HEIGHT, CHANNELS); 
                 img_invert_cpu(invert.ptr<uchar>(), gray.ptr<uchar>(), WIDTH, HEIGHT);
+                img_blur_cpu(blur.ptr<uchar>(), gray.ptr<uchar>(), WIDTH, HEIGHT, BLUR_SIZE);
 				break;
 
 			case GPU:
-                uint size_img = WIDTH*HEIGHT*sizeof(unsigned char);
-                unsigned char *rgb_device, *gray_device;
 #ifndef UNIFIED_MEM
                 cudaMalloc((void**)&rgb_device, size_img*CHANNELS);
                 cudaMalloc((void**)&gray_device, size_img);
+                cudaMalloc((void**)&invert_device, size_img);
+                cudaMalloc((void**)&blur_device, size_img);
                 cudaMemcpy(rgb_device, rgb.ptr<uchar>(), size_img*CHANNELS, cudaMemcpyHostToDevice);
                 img_rgb2gray(gray_device, rgb_device, WIDTH, HEIGHT, CHANNELS);
+                img_invert(invert_device, gray_device, WIDTH, HEIGHT);
+                img_blur(blur_device, gray_device, WIDTH, HEIGHT, BLUR_SIZE);
                 cudaMemcpy(gray.ptr<uchar>(), gray_device, size_img, cudaMemcpyDeviceToHost);
+                cudaMemcpy(invert.ptr<uchar>(), invert_device, size_img, cudaMemcpyDeviceToHost);
+                cudaMemcpy(blur.ptr<uchar>(), gray_device, size_img, cudaMemcpyDeviceToHost);
                 cudaFree(rgb_device);
                 cudaFree(gray_device);
+                cudaFree(invert_device);
+                cudaFree(blur_device);
 #else
                 img_rgb2gray(gray.ptr<uchar>(), rgb.ptr<uchar>(), WIDTH, HEIGHT, CHANNELS);
 #endif
@@ -169,6 +180,7 @@ int main(int argc, const char *argv[])
 
 		imshow("Gray", gray);
 		imshow("Invert", invert);
+		imshow("Blur", blur);
 
 		key = waitKey(1);
 	}
