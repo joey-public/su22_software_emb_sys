@@ -7,6 +7,8 @@
 #include "filter.h"
 #include "timer.h"
 
+#define DEBUG
+
 using namespace std;
 using namespace cv;
 
@@ -74,7 +76,6 @@ int main(int argc, const char * argv[])
 	//TODO: change the following two lines to point to the allocated memory from above
 	Mat gray      = Mat(HEIGHT, WIDTH, CV_8U);
 	Mat sobel_out = Mat(HEIGHT, WIDTH, CV_8U);
-	Mat sobel_out_cv = Mat(HEIGHT, WIDTH, CV_8U);
 
 	// More declarations
 	Mat frame, s_x, s_y;
@@ -103,7 +104,12 @@ int main(int argc, const char * argv[])
 #else
                 cvtColor(frame, gray, CV_BGR2GRAY);
 #endif
-
+#ifdef DEBUG
+	Mat sobel_out_cv = Mat(HEIGHT, WIDTH, CV_8U);
+    Sobel(gray, s_x, CV_8U, 1, 0, 3, 1, 0, BORDER_ISOLATED);
+    Sobel(gray, s_y, CV_8U, 0, 1, 3, 1, 0, BORDER_ISOLATED);
+    addWeighted(s_x, 0.5, s_y, 0.5, 0, sobel_out_cv);
+#endif 
 		// OpenCV Sobel
 		switch(sobel_type)
 		{
@@ -118,15 +124,21 @@ int main(int argc, const char * argv[])
 				timer.start();
 				//TODO: call the sobel CPU function
                 sobel_filter_cpu(gray.ptr<uchar>(), sobel_out.ptr<uchar>(), HEIGHT, WIDTH);
-				Sobel(gray, s_x, CV_8U, 1, 0, 3, 1, 0, BORDER_ISOLATED);
-				Sobel(gray, s_y, CV_8U, 0, 1, 3, 1, 0, BORDER_ISOLATED);
-				addWeighted(s_x, 0.5, s_y, 0.5, 0, sobel_out_cv);
 				timer.stop();
 				break;
 
 			case SOBEL_GPU:
 				timer.start();
 				//TODO: call the sobel GPU function
+                unsigned char *gray_device, *sobel_device;
+                int size_img = WIDTH*HEIGHT;
+                cudaMalloc((void**)&gray_device, size_img);
+                cudaMalloc((void**)&sobel_device, size_img);
+                cudaMemcpy(gray_device, gray.ptr<uchar>(), size_img, cudaMemcpyHostToDevice);
+                sobel_filter_gpu(gray_device, sobel_device, HEIGHT, WIDTH);
+                cudaMemcpy(sobel_out.ptr<uchar>(), sobel_device, size_img, cudaMemcpyDeviceToHost);
+                cudaFree(gray_device);
+                cudaFree(sobel_device);
 				timer.stop();
 				break;
 		}
@@ -148,7 +160,9 @@ int main(int argc, const char * argv[])
 		{
 			imshow("Input", gray);
 			imshow("Sobel", sobel_out);
+#ifdef DEBUG
 			imshow("Sobel_CV", sobel_out_cv);
+#endif 
 			if(count <= 1) { moveWindow("Sobel", WIDTH, 0); }
 		}
 
