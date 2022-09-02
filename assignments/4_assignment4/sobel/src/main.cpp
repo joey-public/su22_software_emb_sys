@@ -7,7 +7,7 @@
 #include "filter.h"
 #include "timer.h"
 
-#define DEBUG
+//#define DEBUG
 
 using namespace std;
 using namespace cv;

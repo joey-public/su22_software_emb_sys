@@ -36,7 +36,7 @@ void img_invert_cpu(uchar* out, const uchar* in, const uint width, const uint he
 
 void img_blur_cpu(uchar* out, const uchar* in, const uint width, const uint height, const int blur_size)
 {
- /    float scale = 1/blur_size;
+    float scale = 1/blur_size;
     int offset = blur_size/2;
     for(int i = 0; i < width*height; i++){
         int result = 0;

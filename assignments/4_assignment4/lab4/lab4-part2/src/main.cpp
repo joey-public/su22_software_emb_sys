@@ -138,6 +138,8 @@ int main(int argc, const char *argv[])
 #else
 				cvtColor(rgb, gray, CV_BGR2GRAY);
 #endif
+                invert = 255-gray;
+                cv::blur(gray, blur, Size(BLUR_SIZE,BLUR_SIZE), Point(-1,-1));
 				break;
 			case CPU:
                 img_rgb2gray_cpu(gray.ptr(), rgb.ptr(), WIDTH, HEIGHT, CHANNELS); 

@@ -26,8 +26,10 @@ float run_mm_gpu(const float* A, const float* B, float* C, int M, int N)
 	Timer gpu_timer;
 	gpu_timer.start();
 
-	//TODO: launch the kernel function
-	
+    //one block per sub-matrix, and one thread per submatrix element
+    const int blocks = M/BLOCK_SIZE + N/BLOCK_SIZE; 
+    block_mm_kernel<<<(blocks,1,1),(BLOCK_SIZE,1,1)>>>(A,B,C,M,N);
+    
 	CudaCheckError();
 	CudaSafeCall(cudaDeviceSynchronize());
 	gpu_timer.stop();
@@ -36,5 +38,3 @@ float run_mm_gpu(const float* A, const float* B, float* C, int M, int N)
 
 	return gpu_time;
 }
-
-
