@@ -17,11 +17,12 @@ For this part of the assignment I first installed the Eigen C++ library. I used 
 ### Compile and Run Instructions
 ```
     cd 2_dct 
+    cp ../report_images/image.tif ./images
     mkdir bin/ build/
     make
     bin/dcttest arg
 ```
-**Note arg should be `0` for naive DCT and `1` for separable DCT.**
+**Note arg should be`1` for OpenCv `2` for naive DCT and `3` for separable DCT.**
 ### Description
 In Part 2 of the assignment I compared the performance of a naive Discrete Cosine Transform(DCT) algorithm to a more optimized DCT using a separable algorithm. The DCT algorithms are in the `lab_dct.cxx` file. The main function is in `main.cxx`. The main function takes `image.tif` as a input, runs both DCT algorithms and compares the time it takes to run each algoImages.ipynb)
 1. ![Images](2_dct/displayImages.ipynb)
@@ -55,7 +56,7 @@ In Part 2 of the assignment I compared the performance of a naive Discrete Cosin
 ## Part 3: Matrix Multiplication and Performance
 ### Compile and Run Instructions
 ```
-    insmod kernal_module/CPUcntr.ko
+    sudo insmod ../kernal_module/CPUcntr.ko
     cd 3_matMult
     mkdir bin/ build/
     make
