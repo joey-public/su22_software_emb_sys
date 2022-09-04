@@ -14,7 +14,7 @@ For this part of the assignment I first installed the Eigen C++ library. I used 
 *None*
 
 ## Part 2: Welcome to OpenCV
-### Compile and Run Instructions
+### Compile and Run Instructions (Works on pynq and Jetson)
 ```
     cd 2_dct 
     cp ../report_images/image.tif ./images
@@ -54,7 +54,7 @@ In Part 2 of the assignment I compared the performance of a naive Discrete Cosin
     ```
 
 ## Part 3: Matrix Multiplication and Performance
-### Compile and Run Instructions
+### Compile and Run Instructions (only works on PYNQ)
 ```
     sudo insmod ../kernal_module/CPUcntr.ko
     cd 3_matMult
@@ -62,6 +62,7 @@ In Part 2 of the assignment I compared the performance of a naive Discrete Cosin
     make
     bin/matMultTest
 ```
+**Note the CPU counter kernel module can only be loaded on the PNQ board**
 ### Description
 For the 3rd part of the assignment I implemented a naive matrix multiplication algorithm and compared it to the Eigen and OpenCV library matrix multiplication results. The `myMatMult.cxx` holds the implementation of my naive matrix multiplication algorithm and `main.cxx` contains the logic to perform matrix multiplication with all 3 methods and compare the results. Performance in this part of the lab was monitored using the PMU counter we created fin WES237A. This keeps track of how many clock cycle the cpu uses to do the each matrix multiplication.
 ### Deliverables
