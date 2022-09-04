@@ -54,7 +54,7 @@ In Part 2 of the assignment I compared the performance of a naive Discrete Cosin
     ```
 
 ## Part 3: Matrix Multiplication and Performance
-### Compile and Run Instructions (only works on PYNQ)
+### Compile and Run Instructions (only works on pynq)
 ```
     sudo insmod ../kernal_module/CPUcntr.ko
     cd 3_matMult
@@ -93,7 +93,7 @@ For the 3rd part of the assignment I implemented a naive matrix multiplication a
 
 
 ## Part 4: 2D DCTs
-### Compile and Run Instructions
+### Compile and Run Instructions (Works on pynq and Jetson)
 ```
     cd 4_dct2d
     mkdir bin/ build/
