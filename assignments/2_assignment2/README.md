@@ -106,7 +106,7 @@ There are also 4 shell scripts that can be run to test the results reported in t
     cd 4_dct2d
     mkdir bin/ build/
     make
-    source shell_scripts/batch_run64x64.sh
+    source shell_scripts/batch_run64.sh
 ```
 
 ### Description
