@@ -12,7 +12,7 @@
 #include "matrixmul.h"
 #include "timer.h"
 
-#define DEBUG
+//#define DEBUG
 
 using namespace std;
 using namespace cv;
@@ -21,7 +21,7 @@ using namespace cv;
 void printMat(float*m, int r, int c){
     for(int i = 0; i < r; i++){
         for(int j = 0; j < c; j++){
-            std::cout << m[i*j] << " | ";
+            std::cout << m[i*c+j] << " | ";
         }
         std::cout << std::endl;
     }
@@ -63,7 +63,6 @@ int main(int argc, char const *argv[])
 		}
 	}
     printf("Init B\n");
-
 	for(int i = 0; i < M; i++)
 	{
 		for(int j = 0; j < N; j++)
@@ -75,7 +74,7 @@ int main(int argc, char const *argv[])
 	// MM GPU
 	float time_gpu = -1.f;
     printf("Call gpu mm func\n");
-    run_mm_gpu(h_A, h_B, h_C, M, N);
+    time_gpu = run_mm_gpu(h_A, h_B, h_C, M, N);
 
 	// Profiling
 	float time_cpu;
@@ -114,7 +113,7 @@ int main(int argc, char const *argv[])
 	{
 		for (int j = 0; j < N; ++j)
 		{
-			float diff = abs(h_C[i*N + j] - *cv_C.ptr<float>(i*N + j));
+			float diff = abs(h_C[i*N + j] - cv_C.ptr<float>()[i*N + j]);
 			mse += diff * diff;
 		}
 	}
