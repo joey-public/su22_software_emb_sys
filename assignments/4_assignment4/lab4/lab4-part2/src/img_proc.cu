@@ -1,4 +1,5 @@
 #include "img_proc.h"
+#include <cstdio> 
 
 // =================== Helper Functions ===================
 inline int divup(int a, int b)

@@ -13,7 +13,10 @@
 
 #define BLUR_SIZE 5
 
-#define UNIFIED_MEM 
+//#define UNIFIED_MEM 
+//#define INVERT 
+#define BLUR
+#define IMG_SHOW
 
 using namespace std;
 using namespace cv;
@@ -95,18 +98,27 @@ int main(int argc, const char *argv[])
     printf("\nSeperate Memory\n");
 	Mat rgb = Mat(HEIGHT, WIDTH, CV_8UC3);
 	Mat gray = Mat(HEIGHT, WIDTH, CV_8U);
+    #ifdef INVERT
     Mat invert = Mat(HEIGHT, WIDTH, CV_8U);
+    #endif
+    #ifdef BLUR 
     Mat blur = Mat(HEIGHT, WIDTH, CV_8U);
+    #endif
+
 #else
     printf("\nUnified Memory\n");
     cudaMallocManaged(&rgb_device, size_img*CHANNELS);
     cudaMallocManaged(&gray_device, size_img);
-    cudaMallocManaged(&invert_device, size_img);
-    cudaMallocManaged(&blur_device, size_img);
     Mat rgb = Mat(HEIGHT, WIDTH, CV_8UC3, rgb_device);
     Mat gray = Mat(HEIGHT, WIDTH, CV_8U, gray_device);
+    #ifdef INVERT
+    cudaMallocManaged(&invert_device, size_img);
     Mat invert = Mat(HEIGHT, WIDTH, CV_8U, invert_device);
+    #endif
+    #ifdef BLUR 
+    cudaMallocManaged(&blur_device, size_img);
     Mat blur = Mat(HEIGHT, WIDTH, CV_8U, blur_device);
+    #endif
 #endif
 
 	//Matrix for OpenCV inversion
@@ -126,8 +138,9 @@ int main(int argc, const char *argv[])
 		}
 
 		resize(frame, rgb, Size(WIDTH, HEIGHT));
-
+#ifdef IMG_SHOW
 		imshow("Original", rgb);
+#endif
 
 		timer.start();
 		switch(mode)
@@ -138,32 +151,44 @@ int main(int argc, const char *argv[])
 #else
 				cvtColor(rgb, gray, CV_BGR2GRAY);
 #endif
+                #ifdef INVERT
                 invert = 255-gray;
+                #endif
+                #ifdef BLUR
                 cv::blur(gray, blur, Size(BLUR_SIZE,BLUR_SIZE), Point(-1,-1));
+                #endif
 				break;
 			case CPU:
                 img_rgb2gray_cpu(gray.ptr(), rgb.ptr(), WIDTH, HEIGHT, CHANNELS); 
+                #ifdef INVERT
                 img_invert_cpu(invert.ptr<uchar>(), gray.ptr<uchar>(), WIDTH, HEIGHT);
+                #endif
+                #ifdef BLUR
                 img_blur_cpu(blur.ptr<uchar>(), gray.ptr<uchar>(), WIDTH, HEIGHT, BLUR_SIZE);
+                #endif
 				break;
 
 			case GPU:
 #ifndef UNIFIED_MEM
                 cudaMalloc((void**)&rgb_device, size_img*CHANNELS);
                 cudaMalloc((void**)&gray_device, size_img);
-                cudaMalloc((void**)&invert_device, size_img);
-                cudaMalloc((void**)&blur_device, size_img);
                 cudaMemcpy(rgb_device, rgb.ptr<uchar>(), size_img*CHANNELS, cudaMemcpyHostToDevice);
                 img_rgb2gray(gray_device, rgb_device, WIDTH, HEIGHT, CHANNELS);
-                img_invert(invert_device, gray_device, WIDTH, HEIGHT);
-                img_blur(blur_device, gray_device, WIDTH, HEIGHT, BLUR_SIZE);
                 cudaMemcpy(gray.ptr<uchar>(), gray_device, size_img, cudaMemcpyDeviceToHost);
+                #ifdef INVERT
+                cudaMalloc((void**)&invert_device, size_img);
+                img_invert(invert_device, gray_device, WIDTH, HEIGHT);
                 cudaMemcpy(invert.ptr<uchar>(), invert_device, size_img, cudaMemcpyDeviceToHost);
+                cudaFree(invert_device);
+                #endif
+                #ifdef BLUR
+                cudaMalloc((void**)&blur_device, size_img);
+                img_blur(blur_device, gray_device, WIDTH, HEIGHT, BLUR_SIZE);
                 cudaMemcpy(blur.ptr<uchar>(), blur_device, size_img, cudaMemcpyDeviceToHost);
+                cudaFree(blur_device);
+                #endif
                 cudaFree(rgb_device);
                 cudaFree(gray_device);
-                cudaFree(invert_device);
-                cudaFree(blur_device);
 #else
                 img_rgb2gray(gray.ptr<uchar>(), rgb.ptr<uchar>(), WIDTH, HEIGHT, CHANNELS);
                 img_invert(invert_device, gray_device, WIDTH, HEIGHT);
@@ -180,14 +205,18 @@ int main(int argc, const char *argv[])
 
 		if (count % 10 == 0)
 		{
-			cout << "Execution Time (s) = " << time_elapsed << endl;
+			cout << mode <<" Execution Time (s) = " << time_elapsed << endl;
 			time_elapsed = 0;
 		}
-
+#ifdef IMG_SHOW
 		imshow("Gray", gray);
+        #ifdef INVERT
 		imshow("Invert", invert);
+        #endif
+        #ifdef BLUR
 		imshow("Blur", blur);
-
+        #endif
+#endif
 		key = waitKey(1);
 	}
 }
