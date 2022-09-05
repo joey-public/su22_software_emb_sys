@@ -38,11 +38,13 @@
 ```
 ### Deliverables
 1. Report approximate execution times for OpenCV Sobel, CPU Sobel,  and GPU Sobel for different image sizes.
+
 | Size      | OpenCv      | CPU        | GPU         |
 | --------  | ----------- | ---------- | ----------- |
 | 512x512   | 6.0-8.0 ms  | 7.1-7.6 ms | 1.9-2.5 ms  |
 | 1024x1024 | 26-29 ms    | 28 ms      | 3-4 ms      |
 | 4096x4096 | 419 ms      | 453 ms     | 18 ms       |
+
 For the Sobel Filter, OpenCV was actually not that fast. In fact OpenCV had similar performance to my cpu implementation. Runnning the Sobel filter on the gpu with cuda was much faster.
 
 ## Assignemnt Part 2: Block Matrix Multiply
