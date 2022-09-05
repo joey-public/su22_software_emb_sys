@@ -27,8 +27,7 @@
 2.For each algorithm (greyscale, inversion, blur), which implementation has the best performance? Make a quantitative case.
 - OpenCV converts frames from rgb to grayscale in about 0.001 seconds on a 1024x1024 image. The CPU algorithm took about 0.03 seconds. The GPU algorithm without unified memory took about 0.006s. So the OpenCV fuinction was the fastest at converting the rgb image to grayscale, followed by the GPU and then finally the the CPU. 
 
-- inversion
-- OpenCV performs grayscale conversion + inversion in about 0.002 seconds. The CPU algorithm took about 0.03 seconds. The GPU algorithm without unified memory took about 0.008s. Subtracting out the time for just grayscale we get that openCV completed the inversion in 0.001 seconds, and the GPU finished in 0.002 seconds. Somehow the CPU time to convert to grayscale then invert was almost identicval to the CPU time to jsut convert to grayscale. Again openCV is the fastest, but here the GPU is not too far behind. The CPU was much faster at inverstion than grayscale conversion, probably because the input is a grayscale image which has a third as much data as the rgb image.   
+- OpenCV performs grayscale conversion + inversion in about 0.002 seconds. The CPU algorithm took about 0.03 seconds. The GPU algorithm without unified memory took about 0.008s. Subtracting out the time for just grayscale we get that openCV completed the inversion in 0.001 seconds, and the GPU finished in 0.002 seconds. Somehow the CPU time to convert to grayscale then invert was almost identicval to the CPU time to jsut convert to grayscale. Again openCV is the fastest, but here the GPU is not too far behind.
 
 - OpenCV performs grayscale conversion + blur in about 0.0035 seconds. The CPU algorithm took about 0.110 seconds. The GPU algorithm without unified memory took about 0.0132 seconds. Subtracting out the time for just grayscale we get that openCV completed the blur in 0.034 seconds,the CPu took around 0.080 sconds,  and the GPU finished in 0.0072 seconds. Again openCV is the fastest.
 
@@ -39,9 +38,12 @@
 ```
 ### Deliverables
 1. Report approximate execution times for OpenCV Sobel, CPU Sobel,  and GPU Sobel for different image sizes.
-512x512
-1024x1024
-4096x4096
+| Size      | OpenCv      | CPU        | GPU         |
+| --------  | ----------- | ---------- | ----------- |
+| 512x512   | 6.0-8.0 ms  | 7.1-7.6 ms | 1.9-2.5 ms  |
+| 1024x1024 | 26-29 ms    | 28 ms      | 3-4 ms      |
+| 4096x4096 | 419 ms      | 453 ms     | 18 ms       |
+For the Sobel Filter, OpenCV was actually not that fast. In fact OpenCV had similar performance to my cpu implementation. Runnning the Sobel filter on the gpu with cuda was much faster.
 
 ## Assignemnt Part 2: Block Matrix Multiply
 ### Compile and run instructions

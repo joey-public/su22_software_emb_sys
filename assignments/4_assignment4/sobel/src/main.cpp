@@ -8,6 +8,7 @@
 #include "timer.h"
 
 //#define DEBUG
+//#define SHOW_IMG
 
 using namespace std;
 using namespace cv;
@@ -150,7 +151,7 @@ int main(int argc, const char * argv[])
 		if(count % 10 == 0)
 		{
 			time_elapsed = time_elapsed/10.;
-			cout << "Execution time (ms) = " << time_elapsed << endl;
+			cout <<sobel_type << " Execution time (ms) = " << time_elapsed << endl;
 			time_elapsed = 0;
 		}
 
@@ -158,11 +159,13 @@ int main(int argc, const char * argv[])
 		// Display results
 		if(gray.cols <= 1024 || gray.rows <= 1024)
 		{
+#ifdef SHOW_IMG
 			imshow("Input", gray);
 			imshow("Sobel", sobel_out);
 #ifdef DEBUG
 			imshow("Sobel_CV", sobel_out_cv);
 #endif 
+#endif
 			if(count <= 1) { moveWindow("Sobel", WIDTH, 0); }
 		}
 

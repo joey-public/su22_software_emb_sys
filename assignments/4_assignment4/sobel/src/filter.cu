@@ -33,7 +33,7 @@ void sobel_filter_cpu(const uchar * input, uchar * output, const uint height, co
     for(int i = 0; i < width*height; i++){
         result_x = 0.0f; result_y = 0.0f;
         idx = (i-width*offset)-offset;
-        const int x = 
+//        const int x = 
         for(int r = 0; r < KERNEL_SZ; r++){
             for(int c = 0; c < KERNEL_SZ; c++){
                 if(idx < 0 || idx > width*height){
