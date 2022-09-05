@@ -12,10 +12,21 @@
 #include "matrixmul.h"
 #include "timer.h"
 
+#define DEBUG
 
 using namespace std;
 using namespace cv;
 
+#ifdef DEBUG
+void printMat(float*m, int r, int c){
+    for(int i = 0; i < r; i++){
+        for(int j = 0; j < c; j++){
+            std::cout << m[i*j] << " | ";
+        }
+        std::cout << std::endl;
+    }
+}
+#endif
 
 // ***********************************************
 int main(int argc, char const *argv[])
@@ -84,6 +95,18 @@ int main(int argc, char const *argv[])
 	cpu_timer.stop();
 	time_cpu = cpu_timer.getElapsed();
 	cpu_timer.end();
+
+#ifdef DEBUG
+    std::cout << endl << "A:\n";
+    printMat(h_A,N,M);
+    std::cout << endl << "B:\n";
+    printMat(h_B,M,N);
+    std::cout << endl << "C Cuda:\n";
+    printMat(h_C,N,N);
+    std::cout << endl << "C OpenCv:\n";
+    printMat(cv_C.ptr<float>(),N,N);
+    std::cout << endl;
+#endif
 
 	// Check for errors
 	float mse = 0.f;
