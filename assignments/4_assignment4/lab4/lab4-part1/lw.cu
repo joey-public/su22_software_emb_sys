@@ -4,22 +4,12 @@
 #include <string>
 
 __global__ void myKernel(int *m, int *v, int *r){
-    // write your code here
     r[threadIdx.x]  = v[0] * m[threadIdx.x*3+0];
     r[threadIdx.x] += v[1] * m[threadIdx.x*3+1];
     r[threadIdx.x] += v[2] * m[threadIdx.x*3+2];
-/*    for(int i = 0; i < 3; i++){
-        r[i] = 0;
-        for(int j = 0; j < 3; j++){
-            r[i] += m[i*3+j] * v[j]; 
-            printf("Result at %d = %d", i, r[i]);
-        } 
-    }
-*/
 }
 
 int main(int argc, char* argv[]){
-
     int m[9] = {
         0,1,2,
 		2,3,4,
