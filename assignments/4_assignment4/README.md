@@ -22,15 +22,20 @@ nvcc lw_managed.cu -o lw_managed
 ```
 ### Deliverables
 1.Explain in plain English what example 1 does.
+
 - Example 1 sets up a basic CUDA kernel. This kernel runs on the GPU(device). The kernel accesses and prints values that are stored in an array `a` in the GPUs main memory. Each thread accesses one value of `a`, and the thread calculates which index to acces based on its blockId, ThreadId and the blockDim.   
-1.Explain the difference between example 1 and example 2. What is significant about it?
--Example 2 configures the GPU blocks and threads differently then Example 1. Example one used blocks and 2 threads per block to perform 4 parallel operations. Example 2 uses 1 block but 4 threads per block. Also example 2 stores its threads as a 2D (2x2) structure. As a result, Example 2 still has 4 total threads just like example 1, but the way the calculation for the index of a has changed. This is significant because it shows the importance of how the programmer decides to configure the device memory, Depending on the application how you layout the device memory can make for more or less efficient solutions. 
+
+2.Explain the difference between example 1 and example 2. What is significant about it?
+
+- Example 2 configures the GPU blocks and threads differently then Example 1. Example one used blocks and 2 threads per block to perform 4 parallel operations. Example 2 uses 1 block but 4 threads per block. Also example 2 stores its threads as a 2D (2x2) structure. As a result, Example 2 still has 4 total threads just like example 1, but the way the calculation for the index of a has changed. This is significant because it shows the importance of how the programmer decides to configure the device memory, Depending on the application how you layout the device memory can make for more or less efficient solutions. 
 
 
 2.Provide a copy of your myKernel() implementation from your matrix multiplication.
+
 - Code is here: ./lab4/lab4-part1
 
 3.Explain the difference between the two lw implementations.
+
 - The first implementation uses manual memory management. Pointers for the device memory need so be declared and then CudaMalloc() is called to allocate GPU memory for the arrays. The programmer must manually copy data to and from the device using the cudaMemcpy() function and also free the device memory with CudaFree() when it is no longer needed. The second implementation uses managed memory, which automatically handles the memory management for you. You just call the cudaMallocManaged() function for each array you want on the device and then memory management is taken care of under the hood. This allows for less lines of code in your script since you can skip the cudaMemcpy() lines, but it also gives you slightly less control over the device and host memory. It also abstracts the fact that the Jetson actually has separate CPU and GPU memory.
 
 
@@ -46,8 +51,11 @@ arg = 0 for openCV, 1 for CPU, 2 for GPU
 
 ### Deliverables
 1.Submit all of your final code for Part 2.
+
 - All code is here: ./lab4/lab4-part2
+
 2.For each algorithm (greyscale, inversion, blur), which implementation has the best performance? Make a quantitative case.
+
 - OpenCV converts frames from rgb to grayscale in about 0.001 seconds on a 1024x1024 image. The CPU algorithm took about 0.03 seconds. The GPU algorithm without unified memory took about 0.006s. So the OpenCV function was the fastest at converting the rgb image to grayscale, followed by the GPU and then finally the CPU. 
 
 - OpenCV performs grayscale conversion + inversion in about 0.002 seconds. The CPU algorithm took about 0.03 seconds. The GPU algorithm without unified memory took about 0.008s. Subtracting out the time for just grayscale we get that openCV completed the inversion in 0.001 seconds, and the GPU finished in 0.002 seconds. Somehow the CPU time to convert to grayscale then invert was almost identical to the CPU time to just convert to grayscale. Again openCV is the fastest, but here the GPU is not too far behind.
@@ -92,7 +100,9 @@ source mntest.sh
 
 ### Deliverables
 1. Final Code
+
 - All code is here: ./matrix
+
 2. Results for various M and N values
 
 **Summary of Results**
@@ -165,3 +175,4 @@ Time CPU = 1553.75ms, Time GPU = 105.12ms, Speedup = 14.78x, RMSE = 0.00011
 | 64x64      |  187.97 ms  |  00.85 ms  |   NA     | 128.2251 |
 
 For a 512x512 it looks like using 8x8 or 16x16 block sizes gives similar performance. Using 4x4 was noticeably slower, but still produced the correct result. Using 32x32 or 64x64 resulted in an incorrect GPU solution. I think I might be running into the limit of how much the GPU block cache can store in shared memory for the larger block sizes.  
+
