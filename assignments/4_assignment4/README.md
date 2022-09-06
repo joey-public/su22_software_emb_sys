@@ -3,6 +3,22 @@
 ## Lab Part 1
 ### Compile and run instructions
 ```
+cd ./lab4/lab4-part1/
+
+g++ main.cc -o hello_cpu
+nvcc main.cu -o hello_gpu
+./hello_cpu
+./hello_gpu
+
+nvcc ex1.cu -o ex1
+nvcc ex2.cu -o ex2
+./ex1
+./ex2
+
+nvcc lw.cu -o lw
+nvcc lw_managed.cu -o lw_managed
+./lw
+./lw_managed
 ```
 ### Deliverables
 1.Explain in plain English what example 1 does.
@@ -20,6 +36,11 @@
 ## Lab Part 2
 ### Compile and run instructions
 ```
+cd ./lab4/lab4-part2/
+make
+
+./lab4 arg
+##arg = 0 for openCV, 1 for CPU, 2 for GPU
 ```
 ### Deliverables
 1.Submit all of your final code for Part 2.
@@ -35,6 +56,11 @@
 ## Assignment Part 1: Sobel Filter
 ### Compile and run instructions
 ```
+cd ./sobel
+make
+./sobel arg1 arg2 arg3
+#arg1 and arg2 re width and height
+#arg3 is mode. 0 for openCV, 1 for CPU, 2 for GPU
 ```
 ### Deliverables
 1. Report approximate execution times for OpenCV Sobel, CPU Sobel,  and GPU Sobel for different image sizes.
@@ -50,6 +76,14 @@ For the Sobel Filter, OpenCV was actually not that fast. In fact OpenCV had simi
 ## Assignemnt Part 2: Block Matrix Multiply
 ### Compile and run instructions
 ```
+cd ./matrix
+make
+./mm arg1 arg2
+#arg1 = M, arg2 = N
+```
+or after `make` to batch run with variouse M and N values
+```
+source mntest.sh
 ```
 ### Deliverables
 1. Final Code
