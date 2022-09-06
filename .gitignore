@@ -38,4 +38,4 @@
 #Notebooks
 *.ipynb
 # Videos 
-*.raw
+//*.raw
