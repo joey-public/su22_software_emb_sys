@@ -8,7 +8,7 @@
 #include "timer.h"
 
 //#define DEBUG
-//#define SHOW_IMG
+#define SHOW_IMG
 
 using namespace std;
 using namespace cv;
