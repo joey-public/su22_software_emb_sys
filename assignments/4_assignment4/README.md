@@ -61,7 +61,7 @@ cd ./sobel
 make
 ./sobel arg1 arg2 arg3
 ```
-arg1 and arg2 re width and height. 
+arg1 and arg2 are width and height. 
 arg3 is mode. 0 for openCV, 1 for CPU, 2 for GPU.
 
 ### Deliverables
