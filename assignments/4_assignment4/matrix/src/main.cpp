@@ -47,14 +47,14 @@ int main(int argc, char const *argv[])
 	float* h_B;
 	float* h_C;
 	float* h_Ccpu;
-    printf("Allocating GPU MEM\n");
+//    printf("Allocating GPU MEM\n");
 	//TODO: allocate the unified memory for the input/output matrices. The program will result in a segfault until you complete this line.
     cudaMallocManaged(&h_A, N*M*sizeof(float));
     cudaMallocManaged(&h_B, M*N*sizeof(float));
     cudaMallocManaged(&h_C, N*N*sizeof(float));
 
 	// Initialize matrices
-    printf("Init A\n");
+//    printf("Init A\n");
 	for(int i = 0; i < N; i++)
 	{
 		for(int j = 0; j < M; j++)
@@ -62,7 +62,7 @@ int main(int argc, char const *argv[])
 			h_A[i * M + j] = rand() / (float)RAND_MAX;
 		}
 	}
-    printf("Init B\n");
+//    printf("Init B\n");
 	for(int i = 0; i < M; i++)
 	{
 		for(int j = 0; j < N; j++)
@@ -73,7 +73,7 @@ int main(int argc, char const *argv[])
 
 	// MM GPU
 	float time_gpu = -1.f;
-    printf("Call gpu mm func\n");
+//    printf("Call gpu mm func\n");
     time_gpu = run_mm_gpu(h_A, h_B, h_C, M, N);
 
 	// Profiling
@@ -83,11 +83,11 @@ int main(int argc, char const *argv[])
 	cpu_timer.start();
 
 	Mat cv_A = Mat(N, M, CV_32F, h_A);
-    printf("Calc with OPCV\n");
+//    printf("Calc with OPCV\n");
 	Mat cv_B = Mat(M, N, CV_32F, h_B);
-    printf("Calc with OPCVb\n");
+//    printf("Calc with OPCVb\n");
 	Mat cv_C = Mat(N, N, CV_32F);
-    printf("Calc with OPCVc\n");
+//    printf("Calc with OPCVc\n");
 
 	cv_C = cv_A * cv_B;
 
@@ -127,11 +127,17 @@ int main(int argc, char const *argv[])
 	ss << "Time CPU = " << time_cpu << "ms, Time GPU = " << time_gpu << "ms, Speedup = " << time_cpu/time_gpu << "x, RMSE = ";
 	ss << setprecision(5);
 	ss << rmse;
-
+    
+    cout << "Running for " << M << "x" << N << endl;
 	cout << ss.str() << endl;
+    cout << "---------------------------------------------------------------------\n\n";
 
 	// Free memory
 	//TODO: free the device memory
+    cudaFree(h_A);
+    cudaFree(h_B);
+    cudaFree(h_C);
+
 
 	return 0;
 }

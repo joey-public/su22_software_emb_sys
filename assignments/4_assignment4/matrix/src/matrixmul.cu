@@ -4,7 +4,7 @@
 #include "matrixmul.h"
 #include "timer.h"
 
-#define BLOCK_SIZE 16 
+#define BLOCK_SIZE 32 
 
 __global__ void block_mm_kernel(const float* A, const float* B, float* output, int M, int N) 
 {

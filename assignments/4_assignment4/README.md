@@ -53,5 +53,75 @@ For the Sobel Filter, OpenCV was actually not that fast. In fact OpenCV had simi
 ```
 ### Deliverables
 1. Final Code
-1. Results for various M and N values
-1. optimal block/grid layout for 512x512 matrcies
+- All code is here: ./matrix
+2. Results for various M and N values
+
+**Summary of Results**
+
+| Size       | CPU         | GPU        | speedup  | RMSE     |
+| ---------  | ------------| ---------- | ---------| ---------|
+| 16x16      |    0.12 ms  |   0.16 ms  |   0.78x  | 0.00000  |
+| 16x256     |    2.26 ms  |   0.62 ms  |   3.66x  | 0.00000  |
+| 256x16     |    1.23 ms  |   1.41 ms  |   0.87x  | 0.00001  |
+| 256x256    |   26.95 ms  |   6.00 ms  |   4.49x  | 0.00001  |
+| 256x512    |   95.99 ms  |  23.01 ms  |   4.17x  | 0.00001  |
+| 512x256    |   49.65 ms  |   2.93 ms  |  16.92x  | 0.00004  |
+| 512x512    |  199.51 ms  |  24.57 ms  |   8.12x  | 0.00004  |
+| 512x1024   |  764.56 ms  |  81.43 ms  |   9.39x  | 0.00004  |
+| 1024x512   |  383.14 ms  |  33.83 ms  |  11.33x  | 0.00011  |
+| 1024x1024  | 1553.75 ms  | 105.12 ms  |  14.78x  | 0.00011  |
+
+**Output of `batch_run.sh` Results**
+```
+Running for 16x16
+Time CPU = 0.12ms, Time GPU = 0.16ms, Speedup = 0.78x, RMSE = 0.00000
+---------------------------------------------------------------------
+
+Running for 16x256
+Time CPU = 2.26ms, Time GPU = 0.62ms, Speedup = 3.66x, RMSE = 0.00000
+---------------------------------------------------------------------
+
+Running for 256x16
+Time CPU = 1.23ms, Time GPU = 1.41ms, Speedup = 0.87x, RMSE = 0.00001
+---------------------------------------------------------------------
+
+Running for 256x256
+Time CPU = 26.95ms, Time GPU = 6.00ms, Speedup = 4.49x, RMSE = 0.00001
+---------------------------------------------------------------------
+
+Running for 256x512
+Time CPU = 95.99ms, Time GPU = 23.01ms, Speedup = 4.17x, RMSE = 0.00001
+---------------------------------------------------------------------
+
+Running for 512x256
+Time CPU = 49.65ms, Time GPU = 2.93ms, Speedup = 16.92x, RMSE = 0.00004
+---------------------------------------------------------------------
+
+Running for 512x512
+Time CPU = 199.51ms, Time GPU = 24.57ms, Speedup = 8.12x, RMSE = 0.00004
+---------------------------------------------------------------------
+
+Running for 512x1024
+Time CPU = 764.56ms, Time GPU = 81.43ms, Speedup = 9.39x, RMSE = 0.00004
+---------------------------------------------------------------------
+
+Running for 1024x512
+Time CPU = 383.14ms, Time GPU = 33.83ms, Speedup = 11.33x, RMSE = 0.00011
+---------------------------------------------------------------------
+
+Running for 1024x1024
+Time CPU = 1553.75ms, Time GPU = 105.12ms, Speedup = 14.78x, RMSE = 0.00011
+---------------------------------------------------------------------
+
+
+```
+3. optimal block/grid layout for 512x512 matrcies
+| Block Size | CPU         | GPU        | speedup  | RMSE     |
+| ---------  | ------------| ---------- | ---------| ---------|
+| 4x4        |  194.09 ms  | 143.89 ms  |   1.35x  | 0.00004  |
+| 8x8        |  192.62 ms  |  28.96 ms  |   6.65x  | 0.00004  |
+| 16x16      |  184.36 ms  |  25.59 ms  |   7.20x  | 0.00004  |
+| 32x32      |  199.07 ms  |  00.10 ms  |   NA     | 128.3565 |
+| 64x64      |  187.97 ms  |  00.85 ms  |   NA     | 128.2251 |
+
+For a 512x512 it looks like using 8x8 or 16x16 block sizes gives similar performance. Using 4x4 was noticablly slower, but still produced the correct result. Using 32x32 or 64x64 resulted in an incorrect gpu solution. I think I might be ruinning into the limit of how much the GPU block cach can store in shared memory for the larger block sizes.  
