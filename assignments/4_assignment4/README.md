@@ -40,8 +40,9 @@ cd ./lab4/lab4-part2/
 make
 
 ./lab4 arg
-##arg = 0 for openCV, 1 for CPU, 2 for GPU
 ```
+arg = 0 for openCV, 1 for CPU, 2 for GPU
+
 ### Deliverables
 1.Submit all of your final code for Part 2.
 - All code is here: ./lab4/lab4-part2
@@ -59,9 +60,10 @@ make
 cd ./sobel
 make
 ./sobel arg1 arg2 arg3
-#arg1 and arg2 re width and height
-#arg3 is mode. 0 for openCV, 1 for CPU, 2 for GPU
 ```
+arg1 and arg2 re width and height. 
+arg3 is mode. 0 for openCV, 1 for CPU, 2 for GPU.
+
 ### Deliverables
 1. Report approximate execution times for OpenCV Sobel, CPU Sobel,  and GPU Sobel for different image sizes.
 
@@ -79,12 +81,14 @@ For the Sobel Filter, OpenCV was actually not that fast. In fact OpenCV had simi
 cd ./matrix
 make
 ./mm arg1 arg2
-#arg1 = M, arg2 = N
 ```
+arg1 = M, arg2 = N.
+
 or after `make` to batch run with variouse M and N values
 ```
 source mntest.sh
 ```
+
 ### Deliverables
 1. Final Code
 - All code is here: ./matrix
