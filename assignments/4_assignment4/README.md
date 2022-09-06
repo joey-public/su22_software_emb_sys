@@ -85,6 +85,10 @@ arg3 is mode. 0 for openCV, 1 for CPU, 2 for GPU.
 For the Sobel Filter, OpenCV was actually not that fast. In fact OpenCV had similar performance to my CPU implementation. Running the Sobel filter on the GPU with cuda was much faster.
 
 ## Assignment Part 2: Block Matrix Multiply
+For this section I was havin a lot of trouble getting the cuda kernel to work. I ended up finding a youtube video discussing one way to do block matrix multiplication with cuda  and modifying their solution to work with non-square matricies.  
+
+https://www.youtube.com/watch?v=ga2ML1uGr5o&t=2186s
+
 ### Compile and run instructions
 ```
 cd ./matrix
