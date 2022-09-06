@@ -154,6 +154,7 @@ Time CPU = 1553.75ms, Time GPU = 105.12ms, Speedup = 14.78x, RMSE = 0.00011
 
 ```
 3. optimal block/grid layout for 512x512 matrcies
+
 | Block Size | CPU         | GPU        | speedup  | RMSE     |
 | ---------  | ------------| ---------- | ---------| ---------|
 | 4x4        |  194.09 ms  | 143.89 ms  |   1.35x  | 0.00004  |
