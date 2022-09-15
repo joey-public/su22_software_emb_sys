@@ -6,10 +6,10 @@ NeuralNetwork::NeuralNetwork(float learning_rate) :
 
 NeuralNetwork::~NeuralNetwork()
 {
-	for ( auto layer : layers)
-	{
-		delete layer;
-	}
+//	for ( auto layer : layers)
+//	{
+//		delete layer;
+//	}
 }
 
 void NeuralNetwork::addLayer(NNLayer* layer)
