@@ -5,17 +5,17 @@
 ```
 python3 lab5/tf_mnist_example.py
 ```
-### Lab 5 GPU NN 
+### Lab 5 GPU Neural Network 
 The instructions will run the `AND` gate example
 ```
 cd lab5
 make
 ./lab5
 ```
-To run the `XNOR_GATE` you must edit `lab5/src/dataset.cu` to uncomment line 3. then remake the project and run.  
+To run the `XNOR_GATE` you must edit `lab5/src/dataset.cu` to uncomment line 3. Then remake the project and run.  
 ## Final Code
 All final Code it in the lab5 directory.
-## Reuslts for AND Gate
+## Results for AND Gate
 '''
 Cost : 0.046890
 Total number of epochs : 4999
