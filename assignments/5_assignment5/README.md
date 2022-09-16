@@ -1,22 +1,34 @@
 # Lab 5 Report
 
 ## Compile and Run Instructions
-### Python Tensor flow example
+
+Python Tensor flow example
+
 ```
 python3 lab5/tf_mnist_example.py
 ```
-### Lab 5 GPU Neural Network 
+
+
+Lab 5 GPU Neural Network 
+
+
 The instructions will run the `AND` gate example
+
 ```
 cd lab5
 make
 ./lab5
 ```
+
 To run the `XNOR_GATE` you must edit `lab5/src/dataset.cu` to uncomment line 3. Then remake the project and run.  
+
 ## Final Code
+
 All final Code it in the lab5 directory.
+
 ## Results for AND Gate
-'''
+
+```
 Cost : 0.046890
 Total number of epochs : 4999
 Data : [0.000000, 0.000000] / Pred (pred) - Real : 0.048753 (0.000000) - 0.000000
@@ -41,9 +53,11 @@ Accuracy: 1
 real    0m9.029s
 user    0m3.760s
 sys 0m3.088s
-'''
+```
+
 ## Results for XNOR_GATE
-'''
+
+```
 Cost : 0.134367
 Total number of epochs : 4999
 Data : [0.000000, 0.000000] / Pred (pred) - Real : 0.841592 (1.000000) - 1.000000
@@ -68,4 +82,4 @@ Accuracy: 0.75
 real	0m9.502s
 user	0m3.924s
 sys	0m3.188s
-'''
+```
