@@ -1,5 +1,9 @@
 # Lab 5 Report
 
+## Github Link
+
+https://github.com/joey-public/su22_software_emb_sys/tree/main/assignments/5_assignment5
+
 ## Compile and Run Instructions
 
 Python Tensor flow example
