@@ -1,0 +1,1 @@
+cmd_/home/xilinx/jupyter_notebooks/UCSD/WES237A/wes237a-2022-js/Assignment3/kernal_module/CPUcntr.mod := { echo  /home/xilinx/jupyter_notebooks/UCSD/WES237A/wes237a-2022-js/Assignment3/kernal_module/CPUcntr.o; echo; } > /home/xilinx/jupyter_notebooks/UCSD/WES237A/wes237a-2022-js/Assignment3/kernal_module/CPUcntr.mod
